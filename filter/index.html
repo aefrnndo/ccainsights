@@ -4,11 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Filter — Clarity Insights</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-[data-theme="light"]{--bg:#f5f5f3;--surface:#ffffff;--border:#e4e4e2;--text:#1a1a18;--muted:#88887e;--subtle:#efefed;--grid:rgba(0,0,0,.06)}
-[data-theme="dark"]{--bg:#111110;--surface:#1c1c1a;--border:#2e2e2b;--text:#eeeeec;--muted:#77776e;--subtle:#242422;--grid:rgba(255,255,255,.06)}
+[data-theme="light"]{--bg:#f5f5f3;--surface:#ffffff;--border:#e4e4e2;--text:#1a1a18;--muted:#88887e;--subtle:#efefed;}
+[data-theme="dark"]{--bg:#111110;--surface:#1c1c1a;--border:#2e2e2b;--text:#eeeeec;--muted:#77776e;--subtle:#242422;}
 body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);padding:2rem;transition:background .2s,color .2s;-webkit-font-smoothing:antialiased}
 .wrap{max-width:980px;margin:0 auto}
 .nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);
@@ -22,10 +21,10 @@ body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);pad
 .back{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:5px;
   padding:4px 8px;border-radius:6px;text-decoration:none;transition:background .15s}
 .back:hover{background:var(--subtle);color:var(--text)}
-.toggle{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);
-  background:var(--surface);cursor:pointer;display:flex;align-items:center;
-  justify-content:center;font-size:15px;transition:background .15s}
-.toggle:hover{background:var(--subtle)}
+.toggle{width:36px;height:28px;border-radius:6px;border:1px solid var(--border);
+  background:var(--surface);cursor:pointer;font-size:11px;font-weight:600;
+  color:var(--muted);letter-spacing:.03em;transition:background .15s}
+.toggle:hover{background:var(--subtle);color:var(--text)}
 .badge{font-size:11px;padding:3px 10px;border-radius:20px;background:#E1F5EE;color:#085041;font-weight:500}
 [data-theme="dark"] .badge{background:#0d2b20;color:#4ade9a}
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1rem}
@@ -41,203 +40,19 @@ body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);pad
 code{font-family:ui-monospace,monospace;font-size:11px;color:var(--muted)}
 table th{color:var(--muted)}
 table td{border-color:var(--border)!important}
-.chart-wrap{position:relative}
-.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-52%);text-align:center;pointer-events:none}
-.donut-val{font-size:28px;font-weight:500;line-height:1}
-.donut-lbl{font-size:10px;color:var(--muted);margin-top:3px}
 </style>
 <script>
-(function(){var t=localStorage.getItem('cctheme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
-
-var CHARTS = {};
-
-function themeColors(){
-  var dark = document.documentElement.getAttribute('data-theme')==='dark';
-  return {
-    text:   dark ? '#eeeeec' : '#1a1a18',
-    muted:  dark ? '#77776e' : '#88887e',
-    grid:   dark ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.06)',
-    surface:dark ? '#1c1c1a' : '#ffffff',
-  };
-}
-
-function updateAllCharts(){
-  var c = themeColors();
-  Object.values(CHARTS).forEach(function(ch){
-    if(!ch) return;
-    if(ch.options.scales && ch.options.scales.x){
-      ch.options.scales.x.ticks.color = c.muted;
-      ch.options.scales.x.grid.color  = c.grid;
-    }
-    if(ch.options.scales && ch.options.scales.y){
-      ch.options.scales.y.ticks.color = c.muted;
-      ch.options.scales.y.grid.color  = c.grid;
-    }
-    if(ch.options.plugins && ch.options.plugins.legend){
-      ch.options.plugins.legend.labels.color = c.muted;
-    }
-    ch.update('none');
-  });
-}
-
+(function(){
+  var t = localStorage.getItem('cctheme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+})();
 function toggleTheme(){
-  var cur=document.documentElement.getAttribute('data-theme');
-  var nxt=cur==='dark'?'light':'dark';
-  document.documentElement.setAttribute('data-theme',nxt);
-  localStorage.setItem('cctheme',nxt);
-  var el=document.getElementById('ticon');
-  if(el) el.textContent=nxt==='dark'?'☀':'☽';
-  updateAllCharts();
+  var cur = document.documentElement.getAttribute('data-theme');
+  var nxt = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', nxt);
+  localStorage.setItem('cctheme', nxt);
+  document.getElementById('ticon').textContent = nxt === 'dark' ? 'Dark' : 'Light';
 }
-
-window.addEventListener('DOMContentLoaded', function(){
-  var c = themeColors();
-  Chart.defaults.font.family = "system-ui, sans-serif";
-  Chart.defaults.plugins.tooltip.backgroundColor = c.surface;
-  Chart.defaults.plugins.tooltip.titleColor = c.text;
-  Chart.defaults.plugins.tooltip.bodyColor  = c.muted;
-  Chart.defaults.plugins.tooltip.borderColor = '#2e2e2b';
-  Chart.defaults.plugins.tooltip.borderWidth = 1;
-  Chart.defaults.plugins.tooltip.padding = 10;
-  Chart.defaults.plugins.tooltip.cornerRadius = 8;
-
-  // ── 1. Event interactions horizontal bar ──────────────────────────────────
-  CHARTS.events = new Chart(document.getElementById('chartEvents'), {
-    type: 'bar',
-    data: {
-      labels: ['savedViewClicked', 'filterButtonClicked', 'filterDrawerApplyFilterClicked', 'filterDrawerAccordionExpanded', 'allViewClicked', 'filterDrawerAccordionClosed', 'filterDropdownClicked', 'savedViewViewOptionClicked', 'saveViewClicked', 'clearFilterClicked', 'filterNameAndValueChipRemoved', 'filterDrawerFilterNamePinned'],
-      datasets: [{
-        data: [383, 128, 84, 64, 46, 17, 15, 7, 7, 6, 5, 5],
-        backgroundColor: ['#4A90D9', '#9B94E8', '#1D9E75', '#EF9F27', '#4A90D9', '#EF9F27', '#7F77DD', '#4A90D9', '#4A90D9', '#E24B4A', '#E24B4A', '#EF9F27'],
-        borderRadius: 5,
-        borderSkipped: false,
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: function(ctx){ return '  ' + ctx.parsed.x.toLocaleString() + ' interactions'; }
-          }
-        }
-      },
-      scales: {
-        x: {
-          grid: { color: c.grid },
-          ticks: { color: c.muted, font: { size: 11 } },
-          border: { display: false },
-        },
-        y: {
-          grid: { display: false },
-          ticks: { color: c.muted, font: { size: 11, family: 'ui-monospace, monospace' } },
-          border: { display: false },
-        }
-      }
-    }
-  });
-
-  // ── 2. Completion rate donut ───────────────────────────────────────────────
-  var rateColor = '#1D9E75';
-  CHARTS.completion = new Chart(document.getElementById('chartCompletion'), {
-    type: 'doughnut',
-    data: {
-      datasets: [{
-        data: [66, 34],
-        backgroundColor: [rateColor, c.grid.replace('06','10')],
-        borderWidth: 0,
-        hoverBorderWidth: 0,
-        circumference: 270,
-        rotation: 225,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: '76%',
-      plugins: { legend: { display: false }, tooltip: { enabled: false } }
-    }
-  });
-
-  // ── 3. Firing vs Silent donut ─────────────────────────────────────────────
-  CHARTS.firing = new Chart(document.getElementById('chartFiring'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Firing', 'Silent'],
-      datasets: [{
-        data: [19, 3],
-        backgroundColor: ['#1D9E75', #E24B4A],
-        borderWidth: 0,
-        hoverBorderWidth: 0,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: '72%',
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: function(ctx){ return ' ' + ctx.label + ': ' + ctx.parsed + ' events'; }
-          }
-        }
-      }
-    }
-  });
-
-  // ── 4. Session quality grouped bar ───────────────────────────────────────
-  CHARTS.session = new Chart(document.getElementById('chartSession'), {
-    type: 'bar',
-    data: {
-      labels: ['Active time (s)', 'Duration (s)', 'Pages ×10'],
-      datasets: [
-        {
-          label: 'Filter users',
-          data: [664, 704, 98],
-          backgroundColor: '#1D9E75',
-          borderRadius: 4,
-          borderSkipped: false,
-        },
-        {
-          label: 'All users',
-          data: [244, 825, 102],
-          backgroundColor: c.grid.replace('rgba','rgba').replace('06','30'),
-          borderRadius: 4,
-          borderSkipped: false,
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: true,
-          position: 'top',
-          align: 'end',
-          labels: { color: c.muted, boxWidth: 10, boxHeight: 10, borderRadius: 3, font: { size: 11 } }
-        },
-        tooltip: {
-          callbacks: {
-            label: function(ctx){
-              var v = ctx.parsed.y;
-              if(ctx.dataIndex === 2) return ' ' + ctx.dataset.label + ': ' + (v/10).toFixed(1) + ' pages';
-              return ' ' + ctx.dataset.label + ': ' + v + 's';
-            }
-          }
-        }
-      },
-      scales: {
-        x: { grid: { display: false }, ticks: { color: c.muted, font: { size: 11 } }, border: { display: false } },
-        y: { grid: { color: c.grid }, ticks: { color: c.muted, font: { size: 11 } }, border: { display: false } }
-      }
-    }
-  });
-});
 </script>
 </head>
 <body>
@@ -245,26 +60,23 @@ window.addEventListener('DOMContentLoaded', function(){
 
   <nav class="nav">
     <div class="nav-left">
-      <a class="back" href="../">← Teams</a>
+      <a class="back" href="../">&#8592; Teams</a>
       <span class="nav-sep">·</span>
       <span class="nav-logo">CtrlChain</span>
       <span class="nav-sep">·</span>
       <span class="nav-label">Clarity Insights</span>
     </div>
     <div class="nav-right">
-      <span class="badge">▲ Post-launch</span>
-      <button class="toggle" onclick="toggleTheme()" title="Toggle theme"><span id="ticon">☀</span></button>
+      <span class="badge">&#9650; Post-launch</span>
+      <button class="toggle" onclick="toggleTheme()"><span id="ticon">Light</span></button>
     </div>
   </nav>
 
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem">
-    <div>
-      <div style="font-size:26px;font-weight:500;letter-spacing:-.02em">Filter epic — Clarity insights</div>
-      <div style="font-size:13px;color:var(--muted);margin-top:3px">2026-04-10 – 2026-04-15 · Released 2026-04-10</div>
-    </div>
+  <div style="margin-bottom:1.5rem">
+    <div style="font-size:26px;font-weight:500;letter-spacing:-.02em">Filter epic — Clarity insights</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:3px">2026-04-10 – 2026-04-15 · Released 2026-04-10</div>
   </div>
 
-  <!-- Top metrics row -->
   <div class="metrics">
     <div class="metric">
       <div class="metric-label">Total interactions</div>
@@ -278,58 +90,154 @@ window.addEventListener('DOMContentLoaded', function(){
     </div>
     <div class="metric">
       <div class="metric-label">Firing / Silent</div>
-      <div class="metric-value"><span style="color:#1D9E75">19</span> <span style="font-size:16px;color:var(--border)">/</span> <span style="color:#E24B4A">3</span></div>
+      <div class="metric-value"><span style="color:#1D9E75">19</span><span style="font-size:16px;color:var(--border)"> / </span><span style="color:#E24B4A">3</span></div>
       <div class="metric-sub">events with interactions</div>
     </div>
     <div class="metric">
       <div class="metric-label">Engagement rate</div>
       <div class="metric-value" style="color:#1D9E75">94%</div>
-      <div class="metric-sub">2.7× site avg · 11m 4s active/session</div>
+      <div class="metric-sub">2.7x site avg · 11m 4s active/session</div>
     </div>
   </div>
 
   <!-- Charts row -->
   <div class="three-col">
-    <!-- Event interactions bar chart -->
     <div class="card">
       <div class="card-title">Event interactions — top 12</div>
-      <div class="chart-wrap" style="height:320px">
-        <canvas id="chartEvents"></canvas>
-      </div>
+      <svg viewBox="0 0 500 418" width="100%" style="display:block;overflow:visible">
+      <style>text{font-family:system-ui,sans-serif}</style>
+      <text x="200" y="25" text-anchor="end" font-size="11" font-family="ui-monospace,monospace" fill="var(--muted)">savedViewClicked</text>
+      <rect x="210" y="12" width="240" height="20" rx="4" fill="#4A90D9" opacity="0.9"/>
+      <text x="456" y="25" font-size="11" fill="var(--muted)">383</text>
+      <text x="200" y="59" text-anchor="end" font-size="11" font-family="ui-monospace,monospace" fill="var(--muted)">filterButtonClicked</text>
+      <rect x="210" y="46" width="80" height="20" rx="4" fill="#9B94E8" opacity="0.9"/>
+      <text x="296" y="59" font-size="11" fill="var(--muted)">128</text>
+      <text x="200" y="93" text-anchor="end" font-size="11" font-family="ui-monospace,monospace" fill="var(--muted)">filterDrawerApplyFilterClicked</text>
+      <rect x="210" y="80" width="53" height="20" rx="4" fill="#1D9E75" opacity="0.9"/>
+      <text x="269" y="93" font-size="11" fill="var(--muted)">84</text>
+      <text x="200" y="127" text-anchor="end" font-size="11" font-family="ui-monospace,monospace" fill="var(--muted)">filterDrawerAccordionExpanded</text>
+      <rect x="210" y="114" width="40" height="20" rx="4" fill="#EF9F27" opacity="0.9"/>
+      <text x="256" y="127" font-size="11" fill="var(--muted)">64</text>
+      <text x="200" y="161" text-anchor="end" font-size="11" font-family="ui-monospace,monospace" fill="var(--muted)">allViewClicked</text>
+      <rect x="210" y="148" width="29" height="20" rx="4" fill="#4A90D9" opacity="0.9"/>
+      <text x="245" y="161" font-size="11" fill="var(--muted)">46</text>
+      <text x="200" y="195" text-anchor="end" font-size="11" font-family="ui-monospace,monospace" fill="var(--muted)">filterDrawerAccordionClosed</text>
+      <rect x="210" y="182" width="11" height="20" rx="4" fill="#EF9F27" opacity="0.9"/>
+      <text x="227" y="195" font-size="11" fill="var(--muted)">17</text>
+      <text x="200" y="229" text-anchor="end" font-size="11" font-family="ui-monospace,monospace" fill="var(--muted)">filterDropdownClicked</text>
+      <rect x="210" y="216" width="9" height="20" rx="4" fill="#7F77DD" opacity="0.9"/>
+      <text x="225" y="229" font-size="11" fill="var(--muted)">15</text>
+      <text x="200" y="263" text-anchor="end" font-size="11" font-family="ui-monospace,monospace" fill="var(--muted)">savedViewViewOptionClicked</text>
+      <rect x="210" y="250" width="4" height="20" rx="4" fill="#4A90D9" opacity="0.9"/>
+      <text x="220" y="263" font-size="11" fill="var(--muted)">7</text>
+      <text x="200" y="297" text-anchor="end" font-size="11" font-family="ui-monospace,monospace" fill="var(--muted)">saveViewClicked</text>
+      <rect x="210" y="284" width="4" height="20" rx="4" fill="#4A90D9" opacity="0.9"/>
+      <text x="220" y="297" font-size="11" fill="var(--muted)">7</text>
+      <text x="200" y="331" text-anchor="end" font-size="11" font-family="ui-monospace,monospace" fill="var(--muted)">clearFilterClicked</text>
+      <rect x="210" y="318" width="4" height="20" rx="4" fill="#E24B4A" opacity="0.9"/>
+      <text x="220" y="331" font-size="11" fill="var(--muted)">6</text>
+      <text x="200" y="365" text-anchor="end" font-size="11" font-family="ui-monospace,monospace" fill="var(--muted)">filterNameAndValueChipRemoved</text>
+      <rect x="210" y="352" width="3" height="20" rx="4" fill="#E24B4A" opacity="0.9"/>
+      <text x="219" y="365" font-size="11" fill="var(--muted)">5</text>
+      <text x="200" y="399" text-anchor="end" font-size="11" font-family="ui-monospace,monospace" fill="var(--muted)">filterDrawerFilterNamePinned</text>
+      <rect x="210" y="386" width="3" height="20" rx="4" fill="#EF9F27" opacity="0.9"/>
+      <text x="219" y="399" font-size="11" fill="var(--muted)">5</text>
+    </svg>
     </div>
-
-    <!-- Completion rate donut -->
     <div class="card">
       <div class="card-title">Completion rate</div>
-      <div class="chart-wrap" style="height:180px">
-        <canvas id="chartCompletion"></canvas>
-        <div class="donut-center">
-          <div class="donut-val" style="color:#1D9E75">66%</div>
-          <div class="donut-lbl">On target ✓</div>
-          <div class="donut-lbl">Target ≥65%</div>
-        </div>
-      </div>
-      <div style="margin-top:1rem">
-        <div class="chart-wrap" style="height:100px">
-          <canvas id="chartFiring"></canvas>
-          <div class="donut-center" style="transform:translate(-50%,-50%)">
-            <div style="font-size:16px;font-weight:500;color:var(--text)">19/22</div>
-            <div class="donut-lbl">events firing</div>
-          </div>
-        </div>
+      <svg viewBox="0 0 180 180" width="180" height="180" style="display:block;margin:0 auto">
+      <path d="M 46.2 133.8 A 62 62 0 1 1 133.8 133.8" fill="none" stroke="var(--subtle)" stroke-width="20" stroke-linecap="round"/>
+      <path d="M 46.2 133.8 A 62 62 0 0 1 132.3 44.7" fill="none" stroke="#1D9E75" stroke-width="20" stroke-linecap="round"/>
+      <text x="90" y="82" text-anchor="middle" font-size="28" font-weight="500" fill="#1D9E75" font-family="system-ui,sans-serif">66%</text>
+      <text x="90" y="102" text-anchor="middle" font-size="11" fill="#1D9E75" font-family="system-ui,sans-serif">On target ✓</text>
+      <text x="90" y="118" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="system-ui,sans-serif">Target ≥65%</text>
+    </svg>
+      <div style="margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1rem;text-align:center">
+        <div class="card-title" style="margin-bottom:.75rem">Events firing</div>
+        <svg viewBox="0 0 120 120" width="120" height="120" style="display:block;margin:0 auto">
+      <circle cx="60" cy="60" r="42" fill="none" stroke="var(--subtle)" stroke-width="18"/>
+      <path d="M 60.0 18.0 A 42 42 0 1 1 28.3 32.4" fill="none" stroke="#1D9E75" stroke-width="18" stroke-linecap="butt"/>
+      <path d="M 28.3 32.4 A 42 42 0 0 1 59.9 18.0" fill="none" stroke="#E24B4A" stroke-width="18" stroke-linecap="butt"/>
+      <text x="60" y="56" text-anchor="middle" font-size="16" font-weight="500" fill="var(--text)" font-family="system-ui,sans-serif">19/22</text>
+      <text x="60" y="72" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="system-ui,sans-serif">firing</text>
+    </svg>
       </div>
     </div>
-
-    <!-- Session quality -->
     <div class="card">
       <div class="card-title">Session quality</div>
-      <div class="chart-wrap" style="height:280px">
-        <canvas id="chartSession"></canvas>
+      <svg viewBox="0 0 260 180" width="100%" style="display:block">
+      <style>text{font-family:system-ui,sans-serif}</style>
+      <rect x="6" y="8" width="10" height="10" rx="2" fill="#1D9E75"/>
+      <text x="20" y="18" font-size="10" fill="var(--muted)">Filter users</text>
+      <rect x="90" y="8" width="10" height="10" rx="2" fill="var(--border)"/>
+      <text x="104" y="18" font-size="10" fill="var(--muted)">All users</text>
+      
+      <rect x="20" y="51" width="22" height="105" rx="3" fill="#1D9E75" opacity="0.9"/>
+      <rect x="46" y="118" width="22" height="38" rx="3" fill="var(--border)" opacity="0.9"/>
+      <text x="44" y="172" text-anchor="middle" font-size="9.5" fill="var(--muted)" font-family="system-ui,sans-serif">Active time</text>
+      <rect x="88" y="45" width="22" height="111" rx="3" fill="#1D9E75" opacity="0.9"/>
+      <rect x="114" y="26" width="22" height="130" rx="3" fill="var(--border)" opacity="0.9"/>
+      <text x="112" y="172" text-anchor="middle" font-size="9.5" fill="var(--muted)" font-family="system-ui,sans-serif">Duration</text>
+      <rect x="156" y="154" width="22" height="2" rx="3" fill="#1D9E75" opacity="0.9"/>
+      <rect x="182" y="154" width="22" height="2" rx="3" fill="var(--border)" opacity="0.9"/>
+      <text x="180" y="172" text-anchor="middle" font-size="9.5" fill="var(--muted)" font-family="system-ui,sans-serif">Pages</text>
+    </svg>
+      <div style="margin-top:1rem">
+        <div style="margin-bottom:14px">
+          <div style="font-size:12px;color:#666;margin-bottom:5px">Avg active time</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+            <div style="width:80px;font-size:11px;color:#888;text-align:right;flex-shrink:0">Filter users</div>
+            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
+              <div style="width:100%;height:100%;background:#1D9E75;border-radius:3px"></div>
+            </div>
+            <div style="width:52px;font-size:12px;font-weight:500;color:var(--text)">11m 4s</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:80px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0">All users</div>
+            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
+              <div style="width:37%;height:100%;background:var(--border);border-radius:3px"></div>
+            </div>
+            <div style="width:52px;font-size:12px;color:var(--muted)">4m 4s</div>
+          </div>
+        </div><div style="margin-bottom:14px">
+          <div style="font-size:12px;color:#666;margin-bottom:5px">Avg session duration</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+            <div style="width:80px;font-size:11px;color:#888;text-align:right;flex-shrink:0">Filter users</div>
+            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
+              <div style="width:85%;height:100%;background:#E24B4A;border-radius:3px"></div>
+            </div>
+            <div style="width:52px;font-size:12px;font-weight:500;color:var(--text)">11m 43s</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:80px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0">All users</div>
+            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
+              <div style="width:100%;height:100%;background:var(--border);border-radius:3px"></div>
+            </div>
+            <div style="width:52px;font-size:12px;color:var(--muted)">13m 45s</div>
+          </div>
+        </div><div style="margin-bottom:14px">
+          <div style="font-size:12px;color:#666;margin-bottom:5px">Avg pages / session</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+            <div style="width:80px;font-size:11px;color:#888;text-align:right;flex-shrink:0">Filter users</div>
+            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
+              <div style="width:96%;height:100%;background:#E24B4A;border-radius:3px"></div>
+            </div>
+            <div style="width:52px;font-size:12px;font-weight:500;color:var(--text)">9.8</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:80px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0">All users</div>
+            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
+              <div style="width:100%;height:100%;background:var(--border);border-radius:3px"></div>
+            </div>
+            <div style="width:52px;font-size:12px;color:var(--muted)">10.2</div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px">Based on 250+ sessions</div>
       </div>
     </div>
   </div>
 
-  <!-- Findings + detail bars -->
   <div class="two-col">
     <div class="card">
       <div class="card-title">All event interactions</div>
@@ -490,10 +398,9 @@ window.addEventListener('DOMContentLoaded', function(){
         </div>
       <div style="font-size:11px;color:var(--muted);margin-top:12px;margin-left:198px">2026-04-10 – 2026-04-15</div>
     </div>
-    <div>
-      <div class="card" style="margin-bottom:1rem">
-        <div class="card-title">Key findings</div>
-        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:#FAEEDA;border-radius:8px;margin-bottom:8px">
+    <div class="card">
+      <div class="card-title">Key findings</div>
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:#FAEEDA;border-radius:8px;margin-bottom:8px">
           <div style="width:8px;height:8px;border-radius:50%;background:#EF9F27;flex-shrink:0;margin-top:4px"></div>
           <div style="font-size:13px;color:#633806;line-height:1.6"><strong>3 events have 0 interactions</strong> since launch — check instrumentation or these flows haven't been used yet.</div>
         </div><div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:#E1F5EE;border-radius:8px;margin-bottom:8px">
@@ -509,7 +416,6 @@ window.addEventListener('DOMContentLoaded', function(){
           <div style="width:8px;height:8px;border-radius:50%;background:#aaa;flex-shrink:0;margin-top:4px"></div>
           <div style="font-size:13px;color:#444;line-height:1.6">All <strong>22 events instrumented</strong> · 19 firing · 3 silent since 2026-04-10.</div>
         </div>
-      </div>
     </div>
   </div>
 
