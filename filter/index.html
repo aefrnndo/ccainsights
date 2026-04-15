@@ -1,35 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-theme="dark" lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Filter — Clarity Insights</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,sans-serif;background:#f5f5f3;color:#1a1a1a;padding:2rem}
+[data-theme="light"]{--bg:#f5f5f3;--surface:#ffffff;--border:#e4e4e2;--text:#1a1a18;--muted:#88887e;--subtle:#efefed;}
+[data-theme="dark"]{--bg:#111110;--surface:#1c1c1a;--border:#2e2e2b;--text:#eeeeec;--muted:#77776e;--subtle:#242422;}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);padding:2rem;transition:background .2s,color .2s;-webkit-font-smoothing:antialiased}
 .wrap{max-width:980px;margin:0 auto}
+.nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);
+  margin:-2rem -2rem 2rem -2rem;padding:0 2rem;display:flex;align-items:center;
+  justify-content:space-between;height:52px}
+.nav-left{display:flex;align-items:center;gap:10px}
+.nav-logo{font-size:15px;font-weight:600}
+.nav-sep{color:var(--border);font-size:16px}
+.nav-label{font-size:13px;color:var(--muted)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.back{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:5px;
+  padding:4px 8px;border-radius:6px;text-decoration:none;transition:background .15s}
+.back:hover{background:var(--subtle);color:var(--text)}
+.toggle{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);
+  background:var(--surface);cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:15px;transition:background .15s}
+.toggle:hover{background:var(--subtle)}
 .badge{font-size:11px;padding:3px 10px;border-radius:20px;background:#E1F5EE;color:#085041;font-weight:500}
+[data-theme="dark"] .badge{background:#0d2b20;color:#4ade9a}
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1rem}
-.metric{background:#fff;border:0.5px solid #e0e0de;border-radius:12px;padding:14px 16px}
-.metric-label{font-size:12px;color:#888;margin-bottom:6px}
-.metric-value{font-size:24px;font-weight:500;line-height:1.2}
-.metric-sub{font-size:11px;color:#aaa;margin-top:4px}
-.card{background:#fff;border:0.5px solid #e0e0de;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
-.card-title{font-size:11px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.metric-label{font-size:12px;color:var(--muted);margin-bottom:6px}
+.metric-value{font-size:24px;font-weight:500;line-height:1.2;color:var(--text)}
+.metric-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.card-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
 .two-col{display:grid;grid-template-columns:3fr 2fr;gap:1rem;margin-bottom:1rem}
-.footer{font-size:11px;color:#bbb;text-align:right;margin-top:1.5rem}
-code{font-family:ui-monospace,monospace;font-size:11px}
+.footer{font-size:11px;color:var(--muted);text-align:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+code{font-family:ui-monospace,monospace;font-size:11px;color:var(--muted)}
+table th{color:var(--muted)}
+table td{border-color:var(--border)!important}
 </style>
+<script>
+(function(){var t=localStorage.getItem('cctheme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
+function toggleTheme(){var cur=document.documentElement.getAttribute('data-theme');var nxt=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',nxt);localStorage.setItem('cctheme',nxt);var el=document.getElementById('ticon');if(el)el.textContent=nxt==='dark'?'☀':'☽';}
+</script>
 </head>
 <body>
 <div class="wrap">
 
+  <nav class="nav">
+    <div class="nav-left">
+      <a class="back" href="../">← Teams</a>
+      <span class="nav-sep">·</span>
+      <span class="nav-logo">CtrlChain</span>
+      <span class="nav-sep">·</span>
+      <span class="nav-label">Clarity Insights</span>
+    </div>
+    <div class="nav-right">
+      <span class="badge">▲ Post-launch</span>
+      <button class="toggle" onclick="toggleTheme()" title="Toggle theme"><span id="ticon">☀</span></button>
+    </div>
+  </nav>
+
   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem">
     <div>
-      <div style="font-size:22px;font-weight:500">Filter epic — Clarity insights</div>
-      <div style="font-size:13px;color:#999;margin-top:3px">2026-04-10 – 2026-04-15 · Released 2026-04-10</div>
+      <div style="font-size:26px;font-weight:500;letter-spacing:-.02em">Filter epic — Clarity insights</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:3px">2026-04-10 – 2026-04-15 · Released 2026-04-10</div>
     </div>
-    <span class="badge">▲ Post-launch</span>
   </div>
 
   <div class="metrics">
@@ -40,12 +77,12 @@ code{font-family:ui-monospace,monospace;font-size:11px}
     </div>
     <div class="metric">
       <div class="metric-label">Top event</div>
-      <div class="metric-value" style="font-size:15px;color:#333">savedViewClicked</div>
+      <div class="metric-value" style="font-size:15px">savedViewClicked</div>
       <div class="metric-sub">383 interactions</div>
     </div>
     <div class="metric">
       <div class="metric-label">Firing / Silent</div>
-      <div class="metric-value"><span style="color:#1D9E75">19</span> <span style="font-size:16px;color:#ddd">/</span> <span style="color:#E24B4A">3</span></div>
+      <div class="metric-value"><span style="color:#1D9E75">19</span> <span style="font-size:16px;color:var(--border)">/</span> <span style="color:#E24B4A">3</span></div>
       <div class="metric-sub">events with interactions</div>
     </div>
     <div class="metric">
@@ -60,160 +97,160 @@ code{font-family:ui-monospace,monospace;font-size:11px}
       <div class="card-title">Event interactions since launch</div>
       <div style="font-size:10px;font-weight:600;color:#7F77DD;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 200px">Filter Dropdown Interaction</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDropdownClicked</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDropdownClicked</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:4%;height:100%;background:#7F77DD;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">15</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">15</div>
         </div><div style="font-size:10px;font-weight:600;color:#9B94E8;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 200px">Filter Button Interaction</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterButtonClicked</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterButtonClicked</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:33%;height:100%;background:#9B94E8;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">128</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">128</div>
         </div><div style="font-size:10px;font-weight:600;color:#1D9E75;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 200px">Applying Filter</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDrawerApplyFilterClicked</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDrawerApplyFilterClicked</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:22%;height:100%;background:#1D9E75;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">84</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">84</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDropdownOptionSelected</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDropdownOptionSelected</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:1%;height:100%;background:#1D9E75;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">4</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">4</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDropdownFilterValueSearched</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDropdownFilterValueSearched</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:1%;height:100%;background:#1D9E75;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">2</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">2</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterNameAndValueChipClicked</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterNameAndValueChipClicked</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:0%;height:100%;background:#e8e8e6;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#ccc">—</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--border)">—</div>
         </div><div style="font-size:10px;font-weight:600;color:#E24B4A;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 200px">Remove Filter</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">clearFilterClicked</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">clearFilterClicked</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:2%;height:100%;background:#E24B4A;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">6</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">6</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterNameAndValueChipRemoved</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterNameAndValueChipRemoved</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:1%;height:100%;background:#E24B4A;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">5</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">5</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDrawerClearAllClicked</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDrawerClearAllClicked</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:1%;height:100%;background:#E24B4A;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">4</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">4</div>
         </div><div style="font-size:10px;font-weight:600;color:#EF9F27;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 200px">Filter Drawer</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDrawerAccordionExpanded</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDrawerAccordionExpanded</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:17%;height:100%;background:#EF9F27;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">64</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">64</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDrawerAccordionClosed</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDrawerAccordionClosed</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:4%;height:100%;background:#EF9F27;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">17</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">17</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDrawerFilterNamePinned</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDrawerFilterNamePinned</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:1%;height:100%;background:#EF9F27;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">5</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">5</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDrawerFilterNameSearched</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDrawerFilterNameSearched</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:1%;height:100%;background:#EF9F27;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">3</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">3</div>
         </div><div style="font-size:10px;font-weight:600;color:#4A90D9;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 200px">View</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">savedViewClicked</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">savedViewClicked</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:100%;height:100%;background:#4A90D9;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">383</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">383</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">allViewClicked</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">allViewClicked</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:12%;height:100%;background:#4A90D9;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">46</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">46</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">savedViewViewOptionClicked</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">savedViewViewOptionClicked</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:2%;height:100%;background:#4A90D9;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">7</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">7</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">saveViewClicked</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">saveViewClicked</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:2%;height:100%;background:#4A90D9;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">7</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">7</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">allViewViewOptionClicked</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">allViewViewOptionClicked</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:1%;height:100%;background:#4A90D9;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">2</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">2</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">savedViewRenameClicked</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">savedViewRenameClicked</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:1%;height:100%;background:#4A90D9;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">2</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">2</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">savedViewDeleteClicked</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">savedViewDeleteClicked</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:1%;height:100%;background:#4A90D9;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#555;font-weight:500">2</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--text);font-weight:500">2</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">allViewSetAsDefaultClicked</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">allViewSetAsDefaultClicked</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:0%;height:100%;background:#e8e8e6;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#ccc">—</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--border)">—</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
-          <code style="width:188px;font-size:11px;color:#555;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">savedViewSetAsDefaultClicked</code>
-          <div style="flex:1;height:18px;background:#f0f0ee;border-radius:4px;overflow:hidden">
+          <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">savedViewSetAsDefaultClicked</code>
+          <div style="flex:1;height:18px;background:var(--subtle);border-radius:4px;overflow:hidden">
             <div style="width:0%;height:100%;background:#e8e8e6;border-radius:4px"></div>
           </div>
-          <div style="width:36px;font-size:12px;text-align:right;color:#ccc">—</div>
+          <div style="width:36px;font-size:12px;text-align:right;color:var(--border)">—</div>
         </div>
-      <div style="font-size:11px;color:#bbb;margin-top:12px;margin-left:198px">2026-04-10 – 2026-04-15</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:12px;margin-left:198px">2026-04-10 – 2026-04-15</div>
     </div>
     <div>
       <div class="card" style="margin-bottom:1rem">
@@ -241,60 +278,60 @@ code{font-family:ui-monospace,monospace;font-size:11px}
           <div style="font-size:12px;color:#666;margin-bottom:5px">Avg active time</div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <div style="width:80px;font-size:11px;color:#888;text-align:right;flex-shrink:0">Filter users</div>
-            <div style="flex:1;height:13px;background:#f0f0ee;border-radius:3px;overflow:hidden">
+            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
               <div style="width:100%;height:100%;background:#1D9E75;border-radius:3px"></div>
             </div>
-            <div style="width:52px;font-size:12px;font-weight:500;color:#333">11m 4s</div>
+            <div style="width:52px;font-size:12px;font-weight:500;color:var(--text)">11m 4s</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:80px;font-size:11px;color:#bbb;text-align:right;flex-shrink:0">All users</div>
-            <div style="flex:1;height:13px;background:#f0f0ee;border-radius:3px;overflow:hidden">
-              <div style="width:37%;height:100%;background:#d0d0ce;border-radius:3px"></div>
+            <div style="width:80px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0">All users</div>
+            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
+              <div style="width:37%;height:100%;background:var(--border);border-radius:3px"></div>
             </div>
-            <div style="width:52px;font-size:12px;color:#aaa">4m 4s</div>
+            <div style="width:52px;font-size:12px;color:var(--muted)">4m 4s</div>
           </div>
         </div><div style="margin-bottom:14px">
           <div style="font-size:12px;color:#666;margin-bottom:5px">Avg session duration</div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <div style="width:80px;font-size:11px;color:#888;text-align:right;flex-shrink:0">Filter users</div>
-            <div style="flex:1;height:13px;background:#f0f0ee;border-radius:3px;overflow:hidden">
+            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
               <div style="width:85%;height:100%;background:#E24B4A;border-radius:3px"></div>
             </div>
-            <div style="width:52px;font-size:12px;font-weight:500;color:#333">11m 43s</div>
+            <div style="width:52px;font-size:12px;font-weight:500;color:var(--text)">11m 43s</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:80px;font-size:11px;color:#bbb;text-align:right;flex-shrink:0">All users</div>
-            <div style="flex:1;height:13px;background:#f0f0ee;border-radius:3px;overflow:hidden">
-              <div style="width:100%;height:100%;background:#d0d0ce;border-radius:3px"></div>
+            <div style="width:80px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0">All users</div>
+            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
+              <div style="width:100%;height:100%;background:var(--border);border-radius:3px"></div>
             </div>
-            <div style="width:52px;font-size:12px;color:#aaa">13m 45s</div>
+            <div style="width:52px;font-size:12px;color:var(--muted)">13m 45s</div>
           </div>
         </div><div style="margin-bottom:14px">
           <div style="font-size:12px;color:#666;margin-bottom:5px">Avg pages / session</div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
             <div style="width:80px;font-size:11px;color:#888;text-align:right;flex-shrink:0">Filter users</div>
-            <div style="flex:1;height:13px;background:#f0f0ee;border-radius:3px;overflow:hidden">
+            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
               <div style="width:96%;height:100%;background:#E24B4A;border-radius:3px"></div>
             </div>
-            <div style="width:52px;font-size:12px;font-weight:500;color:#333">9.8</div>
+            <div style="width:52px;font-size:12px;font-weight:500;color:var(--text)">9.8</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:80px;font-size:11px;color:#bbb;text-align:right;flex-shrink:0">All users</div>
-            <div style="flex:1;height:13px;background:#f0f0ee;border-radius:3px;overflow:hidden">
-              <div style="width:100%;height:100%;background:#d0d0ce;border-radius:3px"></div>
+            <div style="width:80px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0">All users</div>
+            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
+              <div style="width:100%;height:100%;background:var(--border);border-radius:3px"></div>
             </div>
-            <div style="width:52px;font-size:12px;color:#aaa">10.2</div>
+            <div style="width:52px;font-size:12px;color:var(--muted)">10.2</div>
           </div>
         </div>
-        <div style="font-size:11px;color:#bbb;margin-top:8px">Based on 250+ sessions · 2026-04-10 – 2026-04-15</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px">Based on 250+ sessions · 2026-04-10 – 2026-04-15</div>
       </div>
     </div>
   </div>
 
   
   <div style="margin-bottom:1rem">
-    <div style="font-size:15px;font-weight:500;color:#333;margin-bottom:4px">Measurement plan</div>
-    <div style="font-size:12px;color:#999;margin-bottom:16px">Filter epic · linked to the post-launch measurement framework</div>
+    <div style="font-size:15px;font-weight:500;color:var(--text);margin-bottom:4px">Measurement plan</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Filter epic · linked to the post-launch measurement framework</div>
 
     <!-- Phase stepper -->
     <div class="card" style="margin-bottom:1rem">
@@ -332,7 +369,7 @@ code{font-family:ui-monospace,monospace;font-size:11px}
     <!-- Primary metric + funnel -->
     <div class="card" style="margin-bottom:1rem">
       <div class="card-title">Primary metric — Filter Task Completion Rate</div>
-      <div style="font-size:12px;color:#888;margin-bottom:16px">Users who apply a filter ÷ users who opened filter entry point</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Users who apply a filter ÷ users who opened filter entry point</div>
       
         <div style="display:flex;gap:24px;align-items:flex-start">
           <div style="flex:1">
@@ -340,39 +377,39 @@ code{font-family:ui-monospace,monospace;font-size:11px}
             
             <div style="margin-bottom:10px">
               <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-                <div style="width:20px;height:20px;border-radius:50%;background:#f0f0ee;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;flex-shrink:0">1</div>
-                <div style="font-size:12px;color:#555">Opened filter</div>
+                <div style="width:20px;height:20px;border-radius:50%;background:var(--subtle);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);flex-shrink:0">1</div>
+                <div style="font-size:12px;color:var(--text)">Opened filter</div>
                 
-                <div style="margin-left:auto;font-size:13px;font-weight:500;color:#333">128</div>
+                <div style="margin-left:auto;font-size:13px;font-weight:500;color:var(--text)">128</div>
               </div>
               <div style="display:flex;align-items:center;gap:8px;margin-left:26px">
-                <div style="flex:1;height:10px;background:#f0f0ee;border-radius:3px;overflow:hidden">
+                <div style="flex:1;height:10px;background:var(--subtle);border-radius:3px;overflow:hidden">
                   <div style="width:100%;height:100%;background:#7F77DD;border-radius:3px"></div>
                 </div>
               </div>
             </div>
             <div style="margin-bottom:10px">
               <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-                <div style="width:20px;height:20px;border-radius:50%;background:#f0f0ee;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;flex-shrink:0">2</div>
-                <div style="font-size:12px;color:#555">Explored drawer</div>
+                <div style="width:20px;height:20px;border-radius:50%;background:var(--subtle);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);flex-shrink:0">2</div>
+                <div style="font-size:12px;color:var(--text)">Explored drawer</div>
                 <span style="font-size:10px;color:#E24B4A;margin-left:6px">▼ 50% from entry</span>
-                <div style="margin-left:auto;font-size:13px;font-weight:500;color:#333">64</div>
+                <div style="margin-left:auto;font-size:13px;font-weight:500;color:var(--text)">64</div>
               </div>
               <div style="display:flex;align-items:center;gap:8px;margin-left:26px">
-                <div style="flex:1;height:10px;background:#f0f0ee;border-radius:3px;overflow:hidden">
+                <div style="flex:1;height:10px;background:var(--subtle);border-radius:3px;overflow:hidden">
                   <div style="width:50%;height:100%;background:#7F77DD;border-radius:3px"></div>
                 </div>
               </div>
             </div>
             <div style="margin-bottom:10px">
               <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-                <div style="width:20px;height:20px;border-radius:50%;background:#f0f0ee;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;flex-shrink:0">3</div>
-                <div style="font-size:12px;color:#555">Applied filter</div>
+                <div style="width:20px;height:20px;border-radius:50%;background:var(--subtle);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);flex-shrink:0">3</div>
+                <div style="font-size:12px;color:var(--text)">Applied filter</div>
                 <span style="font-size:10px;color:#EF9F27;margin-left:6px">▼ 34% from entry</span>
-                <div style="margin-left:auto;font-size:13px;font-weight:500;color:#333">84</div>
+                <div style="margin-left:auto;font-size:13px;font-weight:500;color:var(--text)">84</div>
               </div>
               <div style="display:flex;align-items:center;gap:8px;margin-left:26px">
-                <div style="flex:1;height:10px;background:#f0f0ee;border-radius:3px;overflow:hidden">
+                <div style="flex:1;height:10px;background:var(--subtle);border-radius:3px;overflow:hidden">
                   <div style="width:66%;height:100%;background:#7F77DD;border-radius:3px"></div>
                 </div>
               </div>
@@ -380,8 +417,8 @@ code{font-family:ui-monospace,monospace;font-size:11px}
             
             <div style="display:flex;gap:8px;align-items:flex-start;padding:10px 12px;background:#f5f5f3;border-radius:8px;margin-top:4px">
               <div style="font-size:14px;flex-shrink:0;margin-top:1px">ℹ️</div>
-              <div style="font-size:11px;color:#888;line-height:1.6">
-                <strong style="color:#555">These steps aren't strictly sequential.</strong>
+              <div style="font-size:11px;color:var(--muted);line-height:1.6">
+                <strong style="color:var(--text)">These steps aren't strictly sequential.</strong>
                 Users can apply a filter without expanding the accordion (e.g. via chips or preset options),
                 so "Applied filter" can exceed "Explored drawer". Drop-off % always compares back to the entry point (step 1).
               </div>
@@ -396,11 +433,11 @@ code{font-family:ui-monospace,monospace;font-size:11px}
               <div style="font-size:12px;color:#085041;line-height:1.6"><strong>66% of users who opened the filter successfully applied one</strong> — above the 65% target.</div>
             </div>
           </div>
-          <div style="text-align:center;padding:20px 28px;background:#f8f8f6;border-radius:12px;min-width:150px;flex-shrink:0">
-            <div style="font-size:11px;color:#aaa;margin-bottom:6px">Completion rate</div>
+          <div style="text-align:center;padding:20px 28px;background:var(--subtle);border-radius:12px;min-width:150px;flex-shrink:0">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Completion rate</div>
             <div style="font-size:38px;font-weight:500;color:#1D9E75;line-height:1">66%</div>
             <div style="font-size:11px;color:#1D9E75;margin-top:8px;font-weight:500">On target ✓</div>
-            <div style="font-size:10px;color:#bbb;margin-top:6px">Target ≥65%</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:6px">Target ≥65%</div>
           </div>
         </div>
     </div>
@@ -410,7 +447,7 @@ code{font-family:ui-monospace,monospace;font-size:11px}
       <div class="card-title">Secondary metrics</div>
       <table style="width:100%;border-collapse:collapse">
         <thead>
-          <tr style="border-bottom:1px solid #e8e8e6">
+          <tr style="border-bottom:1px solid var(--border)">
             <th style="padding:8px 12px;text-align:left;font-size:11px;color:#aaa;font-weight:500">Metric</th>
             <th style="padding:8px 12px;text-align:right;font-size:11px;color:#aaa;font-weight:500;width:80px">Value</th>
             <th style="padding:8px 12px;text-align:left;font-size:11px;color:#aaa;font-weight:500">Interpretation</th>
@@ -419,51 +456,51 @@ code{font-family:ui-monospace,monospace;font-size:11px}
         <tbody>
           
             <tr>
-              <td style="padding:10px 12px;border-bottom:1px solid #f0f0ee">
-                <div style="font-size:13px;font-weight:500;color:#333">Chip Adoption Rate</div>
-                <div style="font-size:11px;color:#999;margin-top:2px">filterNameAndValueChipClicked interactions</div>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                <div style="font-size:13px;font-weight:500;color:var(--text)">Chip Adoption Rate</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:2px">filterNameAndValueChipClicked interactions</div>
               </td>
-              <td style="padding:10px 12px;border-bottom:1px solid #f0f0ee;text-align:right">
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border);text-align:right">
                 <div style="font-size:18px;font-weight:500;color:#ccc">0</div>
               </td>
-              <td style="padding:10px 12px;border-bottom:1px solid #f0f0ee">
-                <div style="font-size:11px;color:#aaa;font-style:italic">Rising = users prefer quick chip edits over drawer</div>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                <div style="font-size:11px;color:var(--muted);font-style:italic">Rising = users prefer quick chip edits over drawer</div>
               </td>
             </tr>
             <tr>
-              <td style="padding:10px 12px;border-bottom:1px solid #f0f0ee">
-                <div style="font-size:13px;font-weight:500;color:#333">Drawer Exploration</div>
-                <div style="font-size:11px;color:#999;margin-top:2px">Accordion expands (users exploring filter categories)</div>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                <div style="font-size:13px;font-weight:500;color:var(--text)">Drawer Exploration</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:2px">Accordion expands (users exploring filter categories)</div>
               </td>
-              <td style="padding:10px 12px;border-bottom:1px solid #f0f0ee;text-align:right">
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border);text-align:right">
                 <div style="font-size:18px;font-weight:500;color:#555">64</div>
               </td>
-              <td style="padding:10px 12px;border-bottom:1px solid #f0f0ee">
-                <div style="font-size:11px;color:#aaa;font-style:italic">High = users are discovering filters; low = they know what they want</div>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                <div style="font-size:11px;color:var(--muted);font-style:italic">High = users are discovering filters; low = they know what they want</div>
               </td>
             </tr>
             <tr>
-              <td style="padding:10px 12px;border-bottom:1px solid #f0f0ee">
-                <div style="font-size:13px;font-weight:500;color:#333">Save View Trend</div>
-                <div style="font-size:11px;color:#999;margin-top:2px">saveViewClicked — users saving custom filter sets</div>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                <div style="font-size:13px;font-weight:500;color:var(--text)">Save View Trend</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:2px">saveViewClicked — users saving custom filter sets</div>
               </td>
-              <td style="padding:10px 12px;border-bottom:1px solid #f0f0ee;text-align:right">
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border);text-align:right">
                 <div style="font-size:18px;font-weight:500;color:#555">7</div>
               </td>
-              <td style="padding:10px 12px;border-bottom:1px solid #f0f0ee">
-                <div style="font-size:11px;color:#aaa;font-style:italic">Rising trend = power users forming habits</div>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                <div style="font-size:11px;color:var(--muted);font-style:italic">Rising trend = power users forming habits</div>
               </td>
             </tr>
             <tr>
-              <td style="padding:10px 12px;border-bottom:1px solid #f0f0ee">
-                <div style="font-size:13px;font-weight:500;color:#333">Correction Rate</div>
-                <div style="font-size:11px;color:#999;margin-top:2px">(Clear all + chip removed + clear clicked) ÷ applied</div>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                <div style="font-size:13px;font-weight:500;color:var(--text)">Correction Rate</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:2px">(Clear all + chip removed + clear clicked) ÷ applied</div>
               </td>
-              <td style="padding:10px 12px;border-bottom:1px solid #f0f0ee;text-align:right">
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border);text-align:right">
                 <div style="font-size:18px;font-weight:500;color:#1D9E75">18%</div>
               </td>
-              <td style="padding:10px 12px;border-bottom:1px solid #f0f0ee">
-                <div style="font-size:11px;color:#aaa;font-style:italic">High = users mis-selecting filters; review filter discoverability</div>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                <div style="font-size:11px;color:var(--muted);font-style:italic">High = users mis-selecting filters; review filter discoverability</div>
               </td>
             </tr>
         </tbody>
@@ -475,32 +512,32 @@ code{font-family:ui-monospace,monospace;font-size:11px}
       <div class="card-title">Guardrail metrics</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
         
-            <div style="background:#fff;border:0.5px solid #e0e0de;border-radius:10px;padding:14px 16px">
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-                <div style="font-size:13px;font-weight:500;color:#333">Entry point drop-off</div>
+                <div style="font-size:13px;font-weight:500;color:var(--text)">Entry point drop-off</div>
                 <div style="font-size:11px;font-weight:500;color:#1D9E75;padding:2px 8px;background:#1D9E7518;border-radius:20px">Active</div>
               </div>
               <div style="font-size:22px;font-weight:500;color:#1D9E75;margin-bottom:6px">128</div>
-              <div style="font-size:11px;color:#aaa">filterButtonClicked should grow or hold steady week-over-week</div>
-              <div style="font-size:10px;color:#bbb;margin-top:4px;font-style:italic">Spike in clicks with low apply rate = confusing UX</div>
+              <div style="font-size:11px;color:var(--muted)">filterButtonClicked should grow or hold steady week-over-week</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:4px;font-style:italic">Spike in clicks with low apply rate = confusing UX</div>
             </div>
-            <div style="background:#fff;border:0.5px solid #e0e0de;border-radius:10px;padding:14px 16px">
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-                <div style="font-size:13px;font-weight:500;color:#333">Bulk clear spike</div>
+                <div style="font-size:13px;font-weight:500;color:var(--text)">Bulk clear spike</div>
                 <div style="font-size:11px;font-weight:500;color:#1D9E75;padding:2px 8px;background:#1D9E7518;border-radius:20px">✓ OK</div>
               </div>
               <div style="font-size:22px;font-weight:500;color:#1D9E75;margin-bottom:6px">5%</div>
-              <div style="font-size:11px;color:#aaa">filterDrawerClearAllClicked ÷ filterDrawerApplyFilterClicked</div>
-              <div style="font-size:10px;color:#bbb;margin-top:4px;font-style:italic">If >20%: users applying wrong filters and resetting</div>
+              <div style="font-size:11px;color:var(--muted)">filterDrawerClearAllClicked ÷ filterDrawerApplyFilterClicked</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:4px;font-style:italic">If >20%: users applying wrong filters and resetting</div>
             </div>
-            <div style="background:#fff;border:0.5px solid #e0e0de;border-radius:10px;padding:14px 16px">
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-                <div style="font-size:13px;font-weight:500;color:#333">Saved view engagement</div>
+                <div style="font-size:13px;font-weight:500;color:var(--text)">Saved view engagement</div>
                 <div style="font-size:11px;font-weight:500;color:#1D9E75;padding:2px 8px;background:#1D9E7518;border-radius:20px">Active</div>
               </div>
               <div style="font-size:22px;font-weight:500;color:#1D9E75;margin-bottom:6px">383</div>
-              <div style="font-size:11px;color:#aaa">savedViewClicked — are saved views being recalled?</div>
-              <div style="font-size:10px;color:#bbb;margin-top:4px;font-style:italic">Low = users saving views but not returning to them</div>
+              <div style="font-size:11px;color:var(--muted)">savedViewClicked — are saved views being recalled?</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:4px;font-style:italic">Low = users saving views but not returning to them</div>
             </div>
       </div>
     </div>
