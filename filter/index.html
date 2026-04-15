@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Filter — Clarity Insights</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-[data-theme="light"]{--bg:#f5f5f3;--surface:#ffffff;--border:#e4e4e2;--text:#1a1a18;--muted:#88887e;--subtle:#efefed;}
-[data-theme="dark"]{--bg:#111110;--surface:#1c1c1a;--border:#2e2e2b;--text:#eeeeec;--muted:#77776e;--subtle:#242422;}
+[data-theme="light"]{--bg:#f5f5f3;--surface:#ffffff;--border:#e4e4e2;--text:#1a1a18;--muted:#88887e;--subtle:#efefed;--grid:rgba(0,0,0,.06)}
+[data-theme="dark"]{--bg:#111110;--surface:#1c1c1a;--border:#2e2e2b;--text:#eeeeec;--muted:#77776e;--subtle:#242422;--grid:rgba(255,255,255,.06)}
 body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);padding:2rem;transition:background .2s,color .2s;-webkit-font-smoothing:antialiased}
 .wrap{max-width:980px;margin:0 auto}
 .nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);
@@ -35,14 +36,208 @@ body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);pad
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1rem}
 .card-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
 .two-col{display:grid;grid-template-columns:3fr 2fr;gap:1rem;margin-bottom:1rem}
+.three-col{display:grid;grid-template-columns:2fr 1fr 1fr;gap:1rem;margin-bottom:1rem}
 .footer{font-size:11px;color:var(--muted);text-align:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
 code{font-family:ui-monospace,monospace;font-size:11px;color:var(--muted)}
 table th{color:var(--muted)}
 table td{border-color:var(--border)!important}
+.chart-wrap{position:relative}
+.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-52%);text-align:center;pointer-events:none}
+.donut-val{font-size:28px;font-weight:500;line-height:1}
+.donut-lbl{font-size:10px;color:var(--muted);margin-top:3px}
 </style>
 <script>
 (function(){var t=localStorage.getItem('cctheme')||'dark';document.documentElement.setAttribute('data-theme',t);})();
-function toggleTheme(){var cur=document.documentElement.getAttribute('data-theme');var nxt=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',nxt);localStorage.setItem('cctheme',nxt);var el=document.getElementById('ticon');if(el)el.textContent=nxt==='dark'?'☀':'☽';}
+
+var CHARTS = {};
+
+function themeColors(){
+  var dark = document.documentElement.getAttribute('data-theme')==='dark';
+  return {
+    text:   dark ? '#eeeeec' : '#1a1a18',
+    muted:  dark ? '#77776e' : '#88887e',
+    grid:   dark ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.06)',
+    surface:dark ? '#1c1c1a' : '#ffffff',
+  };
+}
+
+function updateAllCharts(){
+  var c = themeColors();
+  Object.values(CHARTS).forEach(function(ch){
+    if(!ch) return;
+    if(ch.options.scales && ch.options.scales.x){
+      ch.options.scales.x.ticks.color = c.muted;
+      ch.options.scales.x.grid.color  = c.grid;
+    }
+    if(ch.options.scales && ch.options.scales.y){
+      ch.options.scales.y.ticks.color = c.muted;
+      ch.options.scales.y.grid.color  = c.grid;
+    }
+    if(ch.options.plugins && ch.options.plugins.legend){
+      ch.options.plugins.legend.labels.color = c.muted;
+    }
+    ch.update('none');
+  });
+}
+
+function toggleTheme(){
+  var cur=document.documentElement.getAttribute('data-theme');
+  var nxt=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',nxt);
+  localStorage.setItem('cctheme',nxt);
+  var el=document.getElementById('ticon');
+  if(el) el.textContent=nxt==='dark'?'☀':'☽';
+  updateAllCharts();
+}
+
+window.addEventListener('DOMContentLoaded', function(){
+  var c = themeColors();
+  Chart.defaults.font.family = "system-ui, sans-serif";
+  Chart.defaults.plugins.tooltip.backgroundColor = c.surface;
+  Chart.defaults.plugins.tooltip.titleColor = c.text;
+  Chart.defaults.plugins.tooltip.bodyColor  = c.muted;
+  Chart.defaults.plugins.tooltip.borderColor = '#2e2e2b';
+  Chart.defaults.plugins.tooltip.borderWidth = 1;
+  Chart.defaults.plugins.tooltip.padding = 10;
+  Chart.defaults.plugins.tooltip.cornerRadius = 8;
+
+  // ── 1. Event interactions horizontal bar ──────────────────────────────────
+  CHARTS.events = new Chart(document.getElementById('chartEvents'), {
+    type: 'bar',
+    data: {
+      labels: ['savedViewClicked', 'filterButtonClicked', 'filterDrawerApplyFilterClicked', 'filterDrawerAccordionExpanded', 'allViewClicked', 'filterDrawerAccordionClosed', 'filterDropdownClicked', 'savedViewViewOptionClicked', 'saveViewClicked', 'clearFilterClicked', 'filterNameAndValueChipRemoved', 'filterDrawerFilterNamePinned'],
+      datasets: [{
+        data: [383, 128, 84, 64, 46, 17, 15, 7, 7, 6, 5, 5],
+        backgroundColor: ['#4A90D9', '#9B94E8', '#1D9E75', '#EF9F27', '#4A90D9', '#EF9F27', '#7F77DD', '#4A90D9', '#4A90D9', '#E24B4A', '#E24B4A', '#EF9F27'],
+        borderRadius: 5,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx){ return '  ' + ctx.parsed.x.toLocaleString() + ' interactions'; }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: c.grid },
+          ticks: { color: c.muted, font: { size: 11 } },
+          border: { display: false },
+        },
+        y: {
+          grid: { display: false },
+          ticks: { color: c.muted, font: { size: 11, family: 'ui-monospace, monospace' } },
+          border: { display: false },
+        }
+      }
+    }
+  });
+
+  // ── 2. Completion rate donut ───────────────────────────────────────────────
+  var rateColor = '#1D9E75';
+  CHARTS.completion = new Chart(document.getElementById('chartCompletion'), {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: [66, 34],
+        backgroundColor: [rateColor, c.grid.replace('06','10')],
+        borderWidth: 0,
+        hoverBorderWidth: 0,
+        circumference: 270,
+        rotation: 225,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '76%',
+      plugins: { legend: { display: false }, tooltip: { enabled: false } }
+    }
+  });
+
+  // ── 3. Firing vs Silent donut ─────────────────────────────────────────────
+  CHARTS.firing = new Chart(document.getElementById('chartFiring'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Firing', 'Silent'],
+      datasets: [{
+        data: [19, 3],
+        backgroundColor: ['#1D9E75', #E24B4A],
+        borderWidth: 0,
+        hoverBorderWidth: 0,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '72%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx){ return ' ' + ctx.label + ': ' + ctx.parsed + ' events'; }
+          }
+        }
+      }
+    }
+  });
+
+  // ── 4. Session quality grouped bar ───────────────────────────────────────
+  CHARTS.session = new Chart(document.getElementById('chartSession'), {
+    type: 'bar',
+    data: {
+      labels: ['Active time (s)', 'Duration (s)', 'Pages ×10'],
+      datasets: [
+        {
+          label: 'Filter users',
+          data: [664, 704, 98],
+          backgroundColor: '#1D9E75',
+          borderRadius: 4,
+          borderSkipped: false,
+        },
+        {
+          label: 'All users',
+          data: [244, 825, 102],
+          backgroundColor: c.grid.replace('rgba','rgba').replace('06','30'),
+          borderRadius: 4,
+          borderSkipped: false,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          align: 'end',
+          labels: { color: c.muted, boxWidth: 10, boxHeight: 10, borderRadius: 3, font: { size: 11 } }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(ctx){
+              var v = ctx.parsed.y;
+              if(ctx.dataIndex === 2) return ' ' + ctx.dataset.label + ': ' + (v/10).toFixed(1) + ' pages';
+              return ' ' + ctx.dataset.label + ': ' + v + 's';
+            }
+          }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: c.muted, font: { size: 11 } }, border: { display: false } },
+        y: { grid: { color: c.grid }, ticks: { color: c.muted, font: { size: 11 } }, border: { display: false } }
+      }
+    }
+  });
+});
 </script>
 </head>
 <body>
@@ -69,6 +264,7 @@ function toggleTheme(){var cur=document.documentElement.getAttribute('data-theme
     </div>
   </div>
 
+  <!-- Top metrics row -->
   <div class="metrics">
     <div class="metric">
       <div class="metric-label">Total interactions</div>
@@ -92,9 +288,51 @@ function toggleTheme(){var cur=document.documentElement.getAttribute('data-theme
     </div>
   </div>
 
+  <!-- Charts row -->
+  <div class="three-col">
+    <!-- Event interactions bar chart -->
+    <div class="card">
+      <div class="card-title">Event interactions — top 12</div>
+      <div class="chart-wrap" style="height:320px">
+        <canvas id="chartEvents"></canvas>
+      </div>
+    </div>
+
+    <!-- Completion rate donut -->
+    <div class="card">
+      <div class="card-title">Completion rate</div>
+      <div class="chart-wrap" style="height:180px">
+        <canvas id="chartCompletion"></canvas>
+        <div class="donut-center">
+          <div class="donut-val" style="color:#1D9E75">66%</div>
+          <div class="donut-lbl">On target ✓</div>
+          <div class="donut-lbl">Target ≥65%</div>
+        </div>
+      </div>
+      <div style="margin-top:1rem">
+        <div class="chart-wrap" style="height:100px">
+          <canvas id="chartFiring"></canvas>
+          <div class="donut-center" style="transform:translate(-50%,-50%)">
+            <div style="font-size:16px;font-weight:500;color:var(--text)">19/22</div>
+            <div class="donut-lbl">events firing</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session quality -->
+    <div class="card">
+      <div class="card-title">Session quality</div>
+      <div class="chart-wrap" style="height:280px">
+        <canvas id="chartSession"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Findings + detail bars -->
   <div class="two-col">
     <div class="card">
-      <div class="card-title">Event interactions since launch</div>
+      <div class="card-title">All event interactions</div>
       <div style="font-size:10px;font-weight:600;color:#7F77DD;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 200px">Filter Dropdown Interaction</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
           <code style="width:188px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">filterDropdownClicked</code>
@@ -271,59 +509,6 @@ function toggleTheme(){var cur=document.documentElement.getAttribute('data-theme
           <div style="width:8px;height:8px;border-radius:50%;background:#aaa;flex-shrink:0;margin-top:4px"></div>
           <div style="font-size:13px;color:#444;line-height:1.6">All <strong>22 events instrumented</strong> · 19 firing · 3 silent since 2026-04-10.</div>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-title">Session quality — filter users vs all</div>
-        <div style="margin-bottom:14px">
-          <div style="font-size:12px;color:#666;margin-bottom:5px">Avg active time</div>
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
-            <div style="width:80px;font-size:11px;color:#888;text-align:right;flex-shrink:0">Filter users</div>
-            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
-              <div style="width:100%;height:100%;background:#1D9E75;border-radius:3px"></div>
-            </div>
-            <div style="width:52px;font-size:12px;font-weight:500;color:var(--text)">11m 4s</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:80px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0">All users</div>
-            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
-              <div style="width:37%;height:100%;background:var(--border);border-radius:3px"></div>
-            </div>
-            <div style="width:52px;font-size:12px;color:var(--muted)">4m 4s</div>
-          </div>
-        </div><div style="margin-bottom:14px">
-          <div style="font-size:12px;color:#666;margin-bottom:5px">Avg session duration</div>
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
-            <div style="width:80px;font-size:11px;color:#888;text-align:right;flex-shrink:0">Filter users</div>
-            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
-              <div style="width:85%;height:100%;background:#E24B4A;border-radius:3px"></div>
-            </div>
-            <div style="width:52px;font-size:12px;font-weight:500;color:var(--text)">11m 43s</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:80px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0">All users</div>
-            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
-              <div style="width:100%;height:100%;background:var(--border);border-radius:3px"></div>
-            </div>
-            <div style="width:52px;font-size:12px;color:var(--muted)">13m 45s</div>
-          </div>
-        </div><div style="margin-bottom:14px">
-          <div style="font-size:12px;color:#666;margin-bottom:5px">Avg pages / session</div>
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
-            <div style="width:80px;font-size:11px;color:#888;text-align:right;flex-shrink:0">Filter users</div>
-            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
-              <div style="width:96%;height:100%;background:#E24B4A;border-radius:3px"></div>
-            </div>
-            <div style="width:52px;font-size:12px;font-weight:500;color:var(--text)">9.8</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="width:80px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0">All users</div>
-            <div style="flex:1;height:13px;background:var(--subtle);border-radius:3px;overflow:hidden">
-              <div style="width:100%;height:100%;background:var(--border);border-radius:3px"></div>
-            </div>
-            <div style="width:52px;font-size:12px;color:var(--muted)">10.2</div>
-          </div>
-        </div>
-        <div style="font-size:11px;color:var(--muted);margin-top:8px">Based on 250+ sessions · 2026-04-10 – 2026-04-15</div>
       </div>
     </div>
   </div>
