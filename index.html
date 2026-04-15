@@ -1,23 +1,271 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><title>CtrlChain — Clarity Insights</title>
-<style>body{font-family:system-ui,sans-serif;padding:3rem;max-width:600px;margin:0 auto;color:#1a1a1a}
-h1{font-size:20px;font-weight:500;margin-bottom:.5rem}p{color:#888;font-size:13px;margin-bottom:2rem}
-ul{list-style:none;padding:0}li{margin-bottom:12px}
-a{color:#7F77DD;font-size:15px;text-decoration:none;font-weight:500}
-a:hover{text-decoration:underline}
-.foot{font-size:11px;color:#bbb;margin-top:3rem}</style>
+<html data-theme="dark" lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CtrlChain — Internal Metrics</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+[data-theme="light"]{
+  --bg:#f5f5f3;--surface:#ffffff;--border:#e4e4e2;--text:#1a1a18;
+  --muted:#88887e;--subtle:#efefed;--shadow:0 1px 4px rgba(0,0,0,.07);
+}
+[data-theme="dark"]{
+  --bg:#111110;--surface:#1c1c1a;--border:#2e2e2b;--text:#eeeeec;
+  --muted:#77776e;--subtle:#242422;--shadow:none;
+}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);
+  min-height:100vh;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+a{color:inherit;text-decoration:none}
+
+/* Nav */
+.nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);
+  padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:52px}
+.nav-left{display:flex;align-items:center;gap:10px}
+.nav-logo{font-size:15px;font-weight:600}
+.nav-sep{color:var(--border);font-size:16px;user-select:none}
+.nav-label{font-size:13px;color:var(--muted)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.badge{font-size:11px;padding:3px 10px;border-radius:20px;background:var(--subtle);
+  color:var(--muted);font-weight:500;white-space:nowrap}
+.toggle{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);
+  background:var(--surface);cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:15px;transition:background .15s}
+.toggle:hover{background:var(--subtle)}
+.back{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:5px;
+  padding:4px 8px;border-radius:6px;transition:background .15s}
+.back:hover{background:var(--subtle);color:var(--text)}
+
+/* Layout */
+.wrap{max-width:1080px;margin:0 auto;padding:2.5rem 2rem}
+.section-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.07em;margin-bottom:1rem}
+.page-title{font-size:26px;font-weight:500;margin-bottom:4px;letter-spacing:-.02em}
+.page-sub{font-size:13px;color:var(--muted);margin-bottom:2.5rem}
+
+/* Team grid (homepage) */
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:3rem}
+.team-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:1.25rem;transition:border-color .15s,box-shadow .15s;display:block}
+.team-card:hover{border-color:var(--muted);box-shadow:var(--shadow)}
+.team-card-top{display:flex;align-items:center;gap:9px;margin-bottom:1.1rem}
+.team-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.team-card-name{font-size:14px;font-weight:500}
+.mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:1rem}
+.mini-kpi{padding:8px 10px;background:var(--subtle);border-radius:8px}
+.mini-val{font-size:18px;font-weight:500;line-height:1.1;margin-bottom:2px}
+.mini-label{font-size:10px;color:var(--muted);line-height:1.3}
+.card-footer{display:flex;justify-content:flex-end}
+.view-all{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.team-card:hover .view-all{color:var(--text)}
+
+/* KPI cards (team pages) */
+.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:1.25rem 1.4rem}
+.kpi-label{font-size:12px;color:var(--muted);margin-bottom:10px}
+.kpi-row{display:flex;align-items:baseline;gap:5px;margin-bottom:10px}
+.kpi-val{font-size:38px;font-weight:500;line-height:1;letter-spacing:-.03em}
+.kpi-unit{font-size:14px;color:var(--muted);font-weight:400}
+.kpi-note{font-size:11px;color:var(--muted);margin-top:8px}
+.trend{display:inline-flex;align-items:center;gap:4px;font-size:12px;
+  font-weight:500;padding:3px 9px;border-radius:20px}
+.t-good{background:#e1f5ee;color:#085041}
+.t-bad {background:#fcebeb;color:#791f1f}
+.t-neu {background:var(--subtle);color:var(--muted)}
+[data-theme="dark"] .t-good{background:#0d2b20;color:#4ade9a}
+[data-theme="dark"] .t-bad {background:#2b1010;color:#f87171}
+
+/* Team hero (team pages) */
+.team-hero{border-radius:14px;padding:1.75rem 2rem;margin-bottom:1.75rem;
+  border:1px solid var(--border)}
+.hero-stripe{height:3px;border-radius:2px;width:32px;margin-bottom:14px}
+.hero-name{font-size:28px;font-weight:500;letter-spacing:-.02em;margin-bottom:4px}
+.hero-sub{font-size:13px;color:var(--muted)}
+
+/* Clarity grid */
+.clarity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1rem}
+.epic-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem}
+.epic-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
+.epic-name{font-size:14px;font-weight:500}
+.epic-rate-num{font-size:40px;font-weight:500;line-height:1;letter-spacing:-.03em;margin-bottom:3px}
+.epic-rate-lbl{font-size:11px;color:var(--muted);margin-bottom:1rem}
+.epic-stats{display:flex;gap:20px}
+.estat-val{font-size:14px;font-weight:500;margin-bottom:2px}
+.estat-lbl{font-size:10px;color:var(--muted)}
+.epic-divider{margin:12px 0;border:none;border-top:1px solid var(--border)}
+.epic-foot{display:flex;justify-content:space-between;align-items:center}
+.epic-upd{font-size:10px;color:var(--muted)}
+.epic-link{font-size:12px;font-weight:500;color:#7F77DD}
+.epic-link:hover{text-decoration:underline}
+
+/* Footer */
+.footer{font-size:11px;color:var(--muted);text-align:center;padding:2rem 0;
+  margin-top:2rem;border-top:1px solid var(--border)}
+
+@media(max-width:760px){
+  .team-grid,.kpi-grid{grid-template-columns:1fr 1fr}
+  .wrap{padding:1.5rem 1rem}
+}
+@media(max-width:500px){
+  .team-grid,.kpi-grid{grid-template-columns:1fr}
+}
+</style>
+<script>
+(function(){
+  var t=localStorage.getItem('cctheme')||'dark';
+  document.documentElement.setAttribute('data-theme',t);
+})();
+function toggleTheme(){
+  var cur=document.documentElement.getAttribute('data-theme');
+  var nxt=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',nxt);
+  localStorage.setItem('cctheme',nxt);
+  var el=document.getElementById('ticon');
+  if(el) el.textContent=nxt==='dark'?'☀':'☽';
+}
+</script>
 </head>
 <body>
-<h1>CtrlChain — Clarity Insights</h1>
-<p>Auto-generated dashboards · updated on each script run</p>
-<ul>
-      <li><a href="be/index.html">Be — Clarity Insights</a></li>
-      <li><a href="design/index.html">Design — Clarity Insights</a></li>
-      <li><a href="fe/index.html">Fe — Clarity Insights</a></li>
-      <li><a href="filter/index.html">Filter — Clarity Insights</a></li>
-      <li><a href="po/index.html">Po — Clarity Insights</a></li>
-      <li><a href="product/index.html">Product — Clarity Insights</a></li>
-</ul>
-<div class="foot">Generated by Claude · CtrlChain Design Ops</div>
-</body></html>
+<nav class="nav">
+  <div class="nav-left"><span class="nav-logo">CtrlChain</span><span class="nav-sep">·</span><span class="nav-label">Internal Metrics</span></div>
+  <div class="nav-right">
+    <span class="badge">Apr 2026</span>
+    <span class="badge">↻ 2026-04-15</span>
+    <button class="toggle" onclick="toggleTheme()" title="Toggle theme"><span id="ticon">☀</span></button>
+  </div>
+</nav>
+<div class="wrap">
+
+  <div>
+    <h1 class="page-title">Internal Metrics</h1>
+    <p class="page-sub">Product department · Leadership · Apr 2026</p>
+  </div>
+
+  <div class="section-label">Teams</div>
+  <div class="team-grid">
+      <a href="fe/" class="team-card">
+        <div class="team-card-top">
+          <div class="team-dot" style="background:#7F77DD"></div>
+          <div class="team-card-name">Frontend</div>
+        </div>
+        <div class="mini-grid">
+        <div class="mini-kpi">
+          <div class="mini-val" style="color:#7F77DD">4.2<span style="font-size:11px;color:var(--muted);font-weight:400"> / week</span></div>
+          <div class="mini-label">Deploy Frequency</div>
+        </div>
+        <div class="mini-kpi">
+          <div class="mini-val" style="color:#7F77DD">18<span style="font-size:11px;color:var(--muted);font-weight:400"> hrs</span></div>
+          <div class="mini-label">PR Cycle Time</div>
+        </div>
+        <div class="mini-kpi">
+          <div class="mini-val" style="color:#7F77DD">94<span style="font-size:11px;color:var(--muted);font-weight:400"> %</span></div>
+          <div class="mini-label">Build Success Rate</div>
+        </div></div>
+        <div class="card-footer"><span class="view-all">View all →</span></div>
+      </a>
+      <a href="be/" class="team-card">
+        <div class="team-card-top">
+          <div class="team-dot" style="background:#1D9E75"></div>
+          <div class="team-card-name">Backend</div>
+        </div>
+        <div class="mini-grid">
+        <div class="mini-kpi">
+          <div class="mini-val" style="color:#1D9E75">99.8<span style="font-size:11px;color:var(--muted);font-weight:400"> %</span></div>
+          <div class="mini-label">API Uptime</div>
+        </div>
+        <div class="mini-kpi">
+          <div class="mini-val" style="color:#1D9E75">142<span style="font-size:11px;color:var(--muted);font-weight:400"> ms</span></div>
+          <div class="mini-label">Avg Response Time</div>
+        </div>
+        <div class="mini-kpi">
+          <div class="mini-val" style="color:#1D9E75">0.3<span style="font-size:11px;color:var(--muted);font-weight:400"> %</span></div>
+          <div class="mini-label">Error Rate</div>
+        </div></div>
+        <div class="card-footer"><span class="view-all">View all →</span></div>
+      </a>
+      <a href="po/" class="team-card">
+        <div class="team-card-top">
+          <div class="team-dot" style="background:#EF9F27"></div>
+          <div class="team-card-name">Product Ops</div>
+        </div>
+        <div class="mini-grid">
+        <div class="mini-kpi">
+          <div class="mini-val" style="color:#EF9F27">42<span style="font-size:11px;color:var(--muted);font-weight:400"> pts</span></div>
+          <div class="mini-label">Sprint Velocity</div>
+        </div>
+        <div class="mini-kpi">
+          <div class="mini-val" style="color:#EF9F27">3<span style="font-size:11px;color:var(--muted);font-weight:400"> this Q</span></div>
+          <div class="mini-label">Epics Shipped</div>
+        </div>
+        <div class="mini-kpi">
+          <div class="mini-val" style="color:#EF9F27">87<span style="font-size:11px;color:var(--muted);font-weight:400"> items</span></div>
+          <div class="mini-label">Backlog Size</div>
+        </div></div>
+        <div class="card-footer"><span class="view-all">View all →</span></div>
+      </a>
+      <a href="design/" class="team-card">
+        <div class="team-card-top">
+          <div class="team-dot" style="background:#E24B4A"></div>
+          <div class="team-card-name">Design</div>
+        </div>
+        <div class="mini-grid">
+        <div class="mini-kpi">
+          <div class="mini-val" style="color:#E24B4A">148<span style="font-size:11px;color:var(--muted);font-weight:400"> </span></div>
+          <div class="mini-label">DS Components</div>
+        </div>
+        <div class="mini-kpi">
+          <div class="mini-val" style="color:#E24B4A">91<span style="font-size:11px;color:var(--muted);font-weight:400"> %</span></div>
+          <div class="mini-label">Handoff Coverage</div>
+        </div>
+        <div class="mini-kpi">
+          <div class="mini-val" style="color:#E24B4A">3.2<span style="font-size:11px;color:var(--muted);font-weight:400"> days</span></div>
+          <div class="mini-label">Design→Dev Time</div>
+        </div></div>
+        <div class="card-footer"><span class="view-all">View all →</span></div>
+      </a>
+      <a href="product/" class="team-card">
+        <div class="team-card-top">
+          <div class="team-dot" style="background:#4A90D9"></div>
+          <div class="team-card-name">Product</div>
+        </div>
+        <div class="mini-grid">
+        <div class="mini-kpi">
+          <div class="mini-val" style="color:#4A90D9">1,284<span style="font-size:11px;color:var(--muted);font-weight:400"> </span></div>
+          <div class="mini-label">Active Users</div>
+        </div>
+        <div class="mini-kpi">
+          <div class="mini-val" style="color:#4A90D9">34<span style="font-size:11px;color:var(--muted);font-weight:400"> %</span></div>
+          <div class="mini-label">Feature Adoption</div>
+        </div>
+        <div class="mini-kpi">
+          <div class="mini-val" style="color:#4A90D9">72<span style="font-size:11px;color:var(--muted);font-weight:400"> %</span></div>
+          <div class="mini-label">Epic Completion</div>
+        </div></div>
+        <div class="card-footer"><span class="view-all">View all →</span></div>
+      </a></div>
+
+  <div class="section-label">Clarity — Epic Insights</div>
+  <div class="clarity-grid">
+      <div class="epic-card">
+        <div class="epic-top">
+          <div class="epic-name">Filter epic</div>
+          <span class="badge">Discovery · Wk 1–2</span>
+        </div>
+        <div class="epic-rate-num" style="color:#1D9E75">66%</div>
+        <div class="epic-rate-lbl">Task completion rate · On target</div>
+        <div class="epic-stats">
+          <div><div class="estat-val">784</div><div class="estat-lbl">Interactions</div></div>
+          <div><div class="estat-val">19/22</div><div class="estat-lbl">Events firing</div></div>
+          <div><div class="estat-val">Post-launch</div><div class="estat-lbl">Status</div></div>
+        </div>
+        <hr class="epic-divider">
+        <div class="epic-foot">
+          <span class="epic-upd">Updated 2026-04-15</span>
+          <a class="epic-link" href="filter/">View dashboard →</a>
+        </div>
+      </div></div>
+<div class="footer">CtrlChain · Product Department · Updated 2026-04-15</div>
+</div>
+</body>
+</html>
