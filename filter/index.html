@@ -86,11 +86,25 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .card-title{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
 /* Chart rows: fixed height, scrollable */
 .chart-row{display:grid;grid-template-columns:2fr 1fr 1fr;gap:1rem;margin-bottom:1rem}
-.chart-row>.card{margin-bottom:0;height:520px;overflow-y:scroll}
+.chart-row>.card{margin-bottom:0;height:520px;overflow-y:scroll;padding:0}
 .span2{grid-column:span 2}
+/* Sticky header inside scrollable cards */
+.chart-row>.card>.card-title{
+  position:sticky;top:0;z-index:2;
+  background:var(--surface);
+  margin:0;
+  padding:1.25rem 1.25rem 0.75rem;
+  border-radius:12px 12px 0 0;
+  transition:box-shadow .18s;
+}
+.chart-row>.card>.card-title.scrolled{
+  box-shadow:0 2px 8px rgba(0,0,0,.13);
+  border-bottom:1px solid var(--border);
+}
+.chart-row>.card>.card-body{padding:0.75rem 1.25rem 1.25rem}
 /* Visible scrollbar */
 .chart-row>.card::-webkit-scrollbar{width:5px}
-.chart-row>.card::-webkit-scrollbar-track{background:var(--subtle);border-radius:3px}
+.chart-row>.card::-webkit-scrollbar-track{background:var(--subtle)}
 .chart-row>.card::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 .footer{font-size:16px;color:var(--muted);text-align:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
 code{font-family:ui-monospace,monospace;font-size:12px;color:var(--muted)}
@@ -123,6 +137,14 @@ function toggleTheme(){
   localStorage.setItem('cctheme', nxt);
   document.getElementById('ticon').textContent = nxt === 'dark' ? 'Dark' : 'Light';
 }
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.chart-row > .card').forEach(function(card){
+    card.addEventListener('scroll', function(){
+      var title = card.querySelector('.card-title');
+      if (title) title.classList.toggle('scrolled', card.scrollTop > 4);
+    });
+  });
+});
 </script>
 </head>
 <body>
@@ -176,7 +198,7 @@ function toggleTheme(){
   <div class="chart-row">
     <div class="card">
       <div class="card-title">Event interactions — top 10</div>
-      
+      <div class="card-body">
         <div style="margin-bottom:12px">
           <div style="display:flex;align-items:center;gap:10px">
             <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">535</div>
@@ -326,31 +348,34 @@ function toggleTheme(){
               <code style="font-size:12px;color:var(--muted)">saveViewClicked</code>
             </div>
           </div>
-        </div>
+        </div></div>
     </div>
     <div class="card">
       <div class="card-title">Completion rate</div>
-      <svg viewBox="0 0 160 160" width="160" height="160" style="display:block;margin:0 auto">
+      <div class="card-body">
+        <svg viewBox="0 0 160 160" width="160" height="160" style="display:block;margin:0 auto">
       <path d="M 41.8 118.2 A 54 54 0 1 1 118.2 118.2" fill="none" style="stroke:var(--subtle)" stroke-width="16" stroke-linecap="round"/>
       <path d="M 41.8 118.2 A 54 54 0 1 1 120.8 44.6" fill="none" style="stroke:var(--success)" stroke-width="16" stroke-linecap="round"/>
       <text x="80" y="74" text-anchor="middle" font-size="24" font-weight="500" style="fill:var(--success)" font-family="system-ui,sans-serif">68%</text>
       <text x="80" y="92" text-anchor="middle" font-size="12" style="fill:var(--success)" font-family="system-ui,sans-serif">On target ✓</text>
       <text x="80" y="107" text-anchor="middle" font-size="11" style="fill:var(--muted)" font-family="system-ui,sans-serif">Target ≥65%</text>
     </svg>
-      <div style="margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1rem;text-align:center">
-        <div class="card-title" style="margin-bottom:.75rem">Events firing</div>
-        <svg viewBox="0 0 160 160" width="160" height="160" style="display:block;margin:0 auto">
+        <div style="margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1rem;text-align:center">
+          <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem">Events firing</div>
+          <svg viewBox="0 0 160 160" width="160" height="160" style="display:block;margin:0 auto">
       <circle cx="80" cy="80" r="52" fill="none" style="stroke:var(--subtle)" stroke-width="16"/>
       <path d="M 80.0 28.0 A 52 52 0 1 1 40.8 45.9" fill="none" style="stroke:var(--success)" stroke-width="16" stroke-linecap="butt"/>
       <path d="M 40.8 45.9 A 52 52 0 0 1 79.9 28.0" fill="none" style="stroke:var(--critical)" stroke-width="16" stroke-linecap="butt"/>
       <text x="80" y="86" text-anchor="middle" font-size="16" font-weight="500" style="fill:var(--text)" font-family="system-ui,sans-serif">19/22</text>
       <text x="80" y="102" text-anchor="middle" font-size="11" style="fill:var(--muted)" font-family="system-ui,sans-serif">firing</text>
     </svg>
+        </div>
       </div>
     </div>
     <div class="card">
       <div class="card-title">Session quality</div>
-      <svg viewBox="0 0 220 154" width="100%" style="display:block;max-width:240px;margin:0 auto">
+      <div class="card-body">
+        <svg viewBox="0 0 220 154" width="100%" style="display:block;max-width:240px;margin:0 auto">
       <rect x="4" y="6" width="10" height="10" rx="2" style="fill:var(--brand)"/>
       <text x="18" y="15" font-size="11" style="fill:var(--muted);font-family:system-ui,sans-serif">Filter users</text>
       <rect x="90" y="6" width="10" height="10" rx="2" style="fill:var(--border)"/>
@@ -366,8 +391,8 @@ function toggleTheme(){
       <rect x="137" y="132" width="16" height="2" rx="2" style="fill:var(--border)" opacity="0.9"/>
       <text x="135" y="150" text-anchor="middle" font-size="10" style="fill:var(--muted)" font-family="system-ui,sans-serif">Pages</text>
     </svg>
-      <div style="margin-top:1rem">
-        <div style="margin-bottom:12px">
+        <div style="margin-top:1rem">
+          <div style="margin-bottom:12px">
           <div style="font-size:13px;color:var(--muted);margin-bottom:4px">Avg active time</div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
             <div style="width:76px;font-size:12px;color:var(--muted);text-align:right;flex-shrink:0">Filter users</div>
@@ -416,7 +441,8 @@ function toggleTheme(){
             <div style="width:52px;font-size:13px;color:var(--muted)">10.2</div>
           </div>
         </div>
-        <div style="font-size:12px;color:var(--muted);margin-top:6px">Based on 250+ sessions</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:6px">Based on 250+ sessions</div>
+        </div>
       </div>
     </div>
   </div>
@@ -425,7 +451,8 @@ function toggleTheme(){
   <div class="chart-row">
     <div class="card">
       <div class="card-title">All event interactions</div>
-      <div style="font-size:13px;font-weight:600;color:#2a628f;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 0">Filter Dropdown Interaction</div>
+      <div class="card-body">
+        <div style="font-size:13px;font-weight:600;color:#2a628f;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 0">Filter Dropdown Interaction</div>
         <div style="margin-bottom:12px">
           <div style="display:flex;align-items:center;gap:10px">
             <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">16</div>
@@ -756,11 +783,12 @@ function toggleTheme(){
             </div>
           </div>
         </div>
-      <div style="font-size:14px;color:var(--muted);margin-top:12px;margin-left:56px">2026-04-10 – 2026-04-16</div>
+        <div style="font-size:14px;color:var(--muted);margin-top:12px;margin-left:56px">2026-04-10 – 2026-04-16</div>
+      </div>
     </div>
     <div class="card span2">
       <div class="card-title">Key findings</div>
-      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:var(--warning-bg);border-radius:8px;margin-bottom:8px">
+      <div class="card-body"><div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:var(--warning-bg);border-radius:8px;margin-bottom:8px">
           <div style="width:8px;height:8px;border-radius:50%;background:var(--warning);flex-shrink:0;margin-top:4px"></div>
           <div style="font-size:16px;color:var(--text);line-height:1.6"><strong>3 events have 0 interactions</strong> since launch — check instrumentation or these flows haven't been used yet.</div>
         </div><div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:var(--success-bg);border-radius:8px;margin-bottom:8px">
@@ -775,7 +803,7 @@ function toggleTheme(){
         </div><div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:var(--subtle);border-radius:8px;margin-bottom:8px">
           <div style="width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0;margin-top:4px"></div>
           <div style="font-size:16px;color:var(--muted);line-height:1.6">All <strong>22 events instrumented</strong> · 19 firing · 3 silent since 2026-04-10.</div>
-        </div>
+        </div></div>
     </div>
   </div>
 
