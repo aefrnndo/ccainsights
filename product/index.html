@@ -7,48 +7,60 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 
-/* ── Light mode */
+/* ── Light mode — mapped from light-mode.scss + colors.css
+   surface-neutral-light(50)=#ffffff  surface-neutral-default(100)=#fafafa
+   surface-neutral-dark(200)=#ebebeb  border-neutral-default(300)=#d9d9d9
+   text-neutral-body(800)=#3e3e3e     text-neutral-caption(500)=#8b8b8b
+   surface-brand-default → green-600=#6f8f2f   surface-brand-lightest → green-50=#f6fbe9
+   warning-surface → orange-700=#e08300        warning-surface-lighter → orange-50=#fcf0de
+   critical-surface → red-700=#861414          critical-surface-lighter → red-50=#f9e1e1 */
 [data-theme="light"]{
-  --bg:#fafafa;           /* neutrals-100 */
-  --surface:#ffffff;      /* neutrals-50 */
-  --border:#d9d9d9;       /* neutrals-300 */
-  --text:#3e3e3e;         /* neutrals-800 */
-  --muted:#8b8b8b;        /* neutrals-500 */
-  --subtle:#ebebeb;       /* neutrals-200 */
-  --shadow:0 1px 4px rgba(0,0,0,.07);
-  --brand:#6f8f2f;        /* green-600 — surface-brand-default */
-  --brand-bg:#f6fbe9;     /* green-50 */
-  --success:#6f8f2f;      /* green-600 */
-  --success-bg:#f6fbe9;   /* green-50 */
-  --warning:#e08300;      /* orange-700 */
-  --warning-bg:#fcf0de;   /* orange-50 */
-  --critical:#b91c1c;     /* red-500 */
-  --critical-bg:#f9e1e1;  /* red-50 */
-  --nav-bg:#4b6615;       /* green-800 — top bar */
+  --bg:#fafafa;           /* neutrals-100 — surface-neutral-default */
+  --surface:#ffffff;      /* neutrals-50  — surface-neutral-light */
+  --border:#d9d9d9;       /* neutrals-300 — border-neutral-default */
+  --text:#3e3e3e;         /* neutrals-800 — text-neutral-body */
+  --muted:#8b8b8b;        /* neutrals-500 — text-neutral-caption */
+  --subtle:#ebebeb;       /* neutrals-200 — surface-neutral-dark */
+  --shadow:0 1px 4px rgba(0,0,0,.08);
+  --brand:#6f8f2f;        /* green-600   — surface-brand-default */
+  --brand-bg:#f6fbe9;     /* green-50    — surface-brand-lightest */
+  --success:#6f8f2f;      /* green-600   — success-surface */
+  --success-bg:#f6fbe9;   /* green-50    — success-surface-lightest */
+  --warning:#e08300;      /* orange-700  — warning-surface */
+  --warning-bg:#fcf0de;   /* orange-50   — warning-surface-lighter */
+  --critical:#861414;     /* red-700     — critical-surface */
+  --critical-bg:#f9e1e1;  /* red-50      — critical-surface-lighter */
+  --nav-bg:#4b6615;       /* green-800   — top bar (user preference) */
   --nav-text:#f6fbe9;     /* green-50 */
   --nav-muted:#d5eba9;    /* green-200 */
   --nav-border:#3d5213;   /* green-900 */
   --nav-logo:#ffffff;
 }
 
-/* ── Dark mode */
+/* ── Dark mode — mapped from dark-mode.scss + colors.css
+   surface-neutral-default(900)=#333333  surface-neutral-light(800)=#3e3e3e
+   surface-neutral-dark(700)=#565656     border-neutral-default(600)=#717171
+   text-neutral-body(200)=#ebebeb        text-neutral-caption(400)=#b3b3b3
+   surface-brand-default → green-300=#b7d47f   surface-brand-lightest → green-900=#3d5213
+   warning-surface → orange-200=#f7c988        warning-surface-lighter → orange-900=#804000
+   critical-surface → red-200=#ef9292          critical-surface-lighter → red-900=#610f0f */
 [data-theme="dark"]{
-  --bg:#282925;           /* green-1000 */
-  --surface:#343630;      /* green-950 */
-  --border:#565656;       /* neutrals-700 */
-  --text:#fafafa;         /* neutrals-100 */
-  --muted:#8b8b8b;        /* neutrals-500 */
-  --subtle:#343630;       /* green-950 */
+  --bg:#282925;           /* green-1000  — page background */
+  --surface:#333333;      /* neutrals-900 — surface-neutral-default */
+  --border:#717171;       /* neutrals-600 — border-neutral-default */
+  --text:#ebebeb;         /* neutrals-200 — text-neutral-body */
+  --muted:#b3b3b3;        /* neutrals-400 — text-neutral-caption */
+  --subtle:#3e3e3e;       /* neutrals-800 — surface-neutral-light */
   --shadow:none;
-  --brand:#b7d47f;        /* green-300 */
-  --brand-bg:#3d5213;     /* green-900 */
-  --success:#b7d47f;      /* green-300 */
-  --success-bg:#3d5213;   /* green-900 */
-  --warning:#f5b153;      /* orange-300 */
-  --warning-bg:#804000;   /* orange-900 */
-  --critical:#e96e6e;     /* red-300 */
-  --critical-bg:#610f0f;  /* red-900 */
-  --nav-bg:#4b6615;       /* green-800 — identical in both modes */
+  --brand:#b7d47f;        /* green-300   — surface-brand-default */
+  --brand-bg:#3d5213;     /* green-900   — surface-brand-lightest */
+  --success:#b7d47f;      /* green-300   — success-surface */
+  --success-bg:#3d5213;   /* green-900   — success-surface-lightest */
+  --warning:#f7c988;      /* orange-200  — warning-surface */
+  --warning-bg:#804000;   /* orange-900  — warning-surface-lighter */
+  --critical:#ef9292;     /* red-200     — critical-surface */
+  --critical-bg:#610f0f;  /* red-900     — critical-surface-lighter */
+  --nav-bg:#4b6615;       /* green-800   — same as light */
   --nav-text:#f6fbe9;     /* green-50 */
   --nav-muted:#d5eba9;    /* green-200 */
   --nav-border:#3d5213;   /* green-900 */
