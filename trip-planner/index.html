@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trip Planner — Clarity Insights</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+/* ── Light mode — light-mode.scss tokens resolved via colors.css */
+[data-theme="light"]{
+  --bg:#fafafa;           /* neutrals-100 — surface-neutral-default */
+  --surface:#ffffff;      /* neutrals-50  — surface-neutral-light */
+  --border:#d9d9d9;       /* neutrals-300 — border-neutral-default */
+  --text:#3e3e3e;         /* neutrals-800 — text-neutral-body */
+  --muted:#8b8b8b;        /* neutrals-500 — text-neutral-caption */
+  --subtle:#ebebeb;       /* neutrals-200 — surface-neutral-dark */
+  --shadow:0 1px 4px rgba(0,0,0,.08);
+  --brand:#6f8f2f;        /* green-600   — surface-brand-default */
+  --brand-bg:#f6fbe9;     /* green-50    — surface-brand-lightest */
+  --success:#6f8f2f;      /* green-600   — success-surface */
+  --success-bg:#f6fbe9;   /* green-50    — success-surface-lightest */
+  --warning:#e08300;      /* orange-700  — warning-surface */
+  --warning-bg:#fcf0de;   /* orange-50   — warning-surface-lighter */
+  --critical:#861414;     /* red-700     — critical-surface */
+  --critical-bg:#f9e1e1;  /* red-50      — critical-surface-lighter */
+  --nav-bg:#4b6615;       /* green-800   — top bar */
+  --nav-text:#f6fbe9;     /* green-50 */
+  --nav-muted:#d5eba9;    /* green-200 */
+  --nav-border:#3d5213;   /* green-900 */
+  --nav-logo:#ffffff;
+}
+
+/* ── Dark mode — dark-mode.scss tokens resolved via colors.css */
+[data-theme="dark"]{
+  --bg:#282925;           /* green-1000  — page background */
+  --surface:#333333;      /* neutrals-900 — surface-neutral-default */
+  --border:#717171;       /* neutrals-600 — border-neutral-default */
+  --text:#ebebeb;         /* neutrals-200 — text-neutral-body */
+  --muted:#b3b3b3;        /* neutrals-400 — text-neutral-caption */
+  --subtle:#3e3e3e;       /* neutrals-800 — surface-neutral-light */
+  --shadow:none;
+  --brand:#b7d47f;        /* green-300   — surface-brand-default */
+  --brand-bg:#3d5213;     /* green-900   — surface-brand-lightest */
+  --success:#b7d47f;      /* green-300   — success-surface */
+  --success-bg:#3d5213;   /* green-900   — success-surface-lightest */
+  --warning:#f7c988;      /* orange-200  — warning-surface */
+  --warning-bg:#804000;   /* orange-900  — warning-surface-lighter */
+  --critical:#ef9292;     /* red-200     — critical-surface */
+  --critical-bg:#610f0f;  /* red-900     — critical-surface-lighter */
+  --nav-bg:#4b6615;       /* green-800   — same as light */
+  --nav-text:#f6fbe9;     /* green-50 */
+  --nav-muted:#d5eba9;    /* green-200 */
+  --nav-border:#3d5213;   /* green-900 */
+  --nav-logo:#ffffff;
+}
+
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);
+  transition:background .2s,color .2s;-webkit-font-smoothing:antialiased}
+.nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);
+  padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:52px}
+.nav-left{display:flex;align-items:center;gap:10px}
+.nav-logo{font-size:15px;font-weight:600;color:var(--nav-logo)}
+.nav-sep{color:var(--nav-border);font-size:16px;user-select:none}
+.nav-label{font-size:13px;color:var(--nav-muted)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.back{font-size:13px;color:var(--nav-muted);display:flex;align-items:center;gap:5px;
+  padding:4px 8px;border-radius:6px;text-decoration:none;transition:background .15s}
+.back:hover{background:rgba(255,255,255,.1);color:var(--nav-text)}
+.toggle{height:28px;padding:0 10px;border-radius:6px;border:1px solid var(--nav-border);
+  background:rgba(255,255,255,.08);cursor:pointer;font-size:11px;font-weight:600;
+  color:var(--nav-text);letter-spacing:.03em;transition:background .15s}
+.toggle:hover{background:rgba(255,255,255,.16)}
+.badge{font-size:11px;padding:3px 10px;border-radius:20px;
+  background:rgba(255,255,255,.12);color:var(--nav-text);font-weight:500;white-space:nowrap}
+.wrap{max-width:75vw;margin:0 auto;padding:2.5rem 2rem}
+/* Shared 3-column tracks: col1=2fr, col2=1fr, col3=1fr — metrics + grid both use these */
+.page-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:1rem;margin-bottom:1rem}
+/* Metrics row: col1 holds 2 cards side-by-side, col2 and col3 hold one each */
+.metric-pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.metric-label{font-size:14px;color:var(--muted);margin-bottom:6px}
+.metric-value{font-size:24px;font-weight:500;line-height:1.2;color:var(--text)}
+.metric-sub{font-size:13px;color:var(--muted);margin-top:4px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
+.card-title{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
+/* Chart rows: fixed height, scrollable */
+.chart-row{display:grid;grid-template-columns:2fr 1fr 1fr;gap:1rem;margin-bottom:1rem}
+.chart-row>.card{margin-bottom:0;height:520px;overflow-y:scroll;padding:0}
+.span2{grid-column:span 2}
+/* Sticky header inside scrollable cards */
+.chart-row>.card>.card-title{
+  position:sticky;top:0;z-index:2;
+  background:var(--surface);
+  margin:0;
+  padding:1.25rem 1.25rem 0.75rem;
+  border-radius:12px 12px 0 0;
+  transition:box-shadow .18s;
+}
+.chart-row>.card>.card-title.scrolled{
+  box-shadow:0 2px 8px rgba(0,0,0,.13);
+  border-bottom:1px solid var(--border);
+}
+.chart-row>.card>.card-body{padding:0.75rem 1.25rem 1.25rem}
+/* Visible scrollbar */
+.chart-row>.card::-webkit-scrollbar{width:5px}
+.chart-row>.card::-webkit-scrollbar-track{background:var(--subtle)}
+.chart-row>.card::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.footer{font-size:16px;color:var(--muted);text-align:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+code{font-family:ui-monospace,monospace;font-size:12px;color:var(--muted)}
+table th{color:var(--muted);font-size:16px}
+table td{border-color:var(--border)!important;font-size:16px}
+@media(max-width:960px){
+  .wrap{max-width:100%;padding:1.5rem 1.25rem}
+  .page-grid,.chart-row{grid-template-columns:1fr}
+  .metric-pair{grid-template-columns:1fr 1fr}
+  .span2{grid-column:span 1}
+  .chart-row>.card{height:auto;overflow-y:visible}
+}
+@media(max-width:500px){
+  .metric-pair{grid-template-columns:1fr}
+}
+</style>
+<script>
+(function(){
+  var t = localStorage.getItem('cctheme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  document.addEventListener('DOMContentLoaded', function(){
+    var el = document.getElementById('ticon');
+    if (el) el.textContent = t === 'dark' ? 'Light' : 'Dark';
+  });
+})();
+function toggleTheme(){
+  var cur = document.documentElement.getAttribute('data-theme');
+  var nxt = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', nxt);
+  localStorage.setItem('cctheme', nxt);
+  document.getElementById('ticon').textContent = nxt === 'dark' ? 'Dark' : 'Light';
+}
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.chart-row > .card').forEach(function(card){
+    card.addEventListener('scroll', function(){
+      var title = card.querySelector('.card-title');
+      if (title) title.classList.toggle('scrolled', card.scrollTop > 4);
+    });
+  });
+});
+</script>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-left">
+    <a class="back" href="../">&#8592; Teams</a>
+    <span class="nav-sep">·</span>
+    <span class="nav-logo">CtrlChain</span>
+    <span class="nav-sep">·</span>
+    <span class="nav-label">Trip Planner Insights</span>
+  </div>
+  <div class="nav-right">
+    <span class="badge">Post-launch</span>
+    <button class="toggle" onclick="toggleTheme()"><span id="ticon">Light</span></button>
+  </div>
+</nav>
+<div class="wrap">
+
+  <div style="margin-bottom:1.5rem">
+    <div style="font-size:26px;font-weight:500;letter-spacing:-.02em">Trip Planner epic — Clarity insights</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:3px">2026-04-10 – 2026-04-14 · Released 2026-04-10</div>
+  </div>
+
+  <!-- Metrics row — col1 has 2 cards side-by-side, cols 2+3 one each → matches chart columns -->
+  <div class="page-grid" style="margin-bottom:1rem">
+    <div class="metric-pair">
+      <div class="metric">
+        <div class="metric-label">Total interactions</div>
+        <div class="metric-value">163</div>
+        <div class="metric-sub">across 77 events since launch</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Top event</div>
+        <div class="metric-value" style="font-size:16px;font-weight:600">plannerTripsClicked</div>
+        <div class="metric-sub">18 interactions</div>
+      </div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Firing / Silent</div>
+      <div class="metric-value"><span style="color:var(--success)">41</span><span style="font-size:16px;color:var(--border)"> / </span><span style="color:var(--critical)">36</span></div>
+      <div class="metric-sub">events with interactions</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Engagement rate</div>
+      <div class="metric-value" style="color:var(--brand)">94%</div>
+      <div class="metric-sub">2.7x site avg · 11m 4s active/session</div>
+    </div>
+  </div>
+
+  <!-- Chart row 1 — same 3-column tracks as metrics -->
+  <div class="chart-row">
+    <div class="card">
+      <div class="card-title">Event interactions — top 10</div>
+      <div class="card-body">
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">18</div>
+            <div style="flex:1;height:14px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:100%;height:100%;background:var(--muted);border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:3px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Opened a trip from the list</div>
+              <code style="font-size:12px;color:var(--muted)">plannerTripsClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">16</div>
+            <div style="flex:1;height:14px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:89%;height:100%;background:var(--muted);border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:3px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Switched to the Trailer tab</div>
+              <code style="font-size:12px;color:var(--muted)">plannerSchedulerTrailerTabClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">11</div>
+            <div style="flex:1;height:14px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:61%;height:100%;background:var(--muted);border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:3px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Switched to the Driver tab</div>
+              <code style="font-size:12px;color:var(--muted)">plannerSchedulerDriverTabClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">9</div>
+            <div style="flex:1;height:14px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:50%;height:100%;background:var(--muted);border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:3px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Searched within the trips panel</div>
+              <code style="font-size:12px;color:var(--muted)">plannerTripsSearchApplied</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">8</div>
+            <div style="flex:1;height:14px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:44%;height:100%;background:var(--muted);border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:3px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Switched to the Vehicle tab</div>
+              <code style="font-size:12px;color:var(--muted)">plannerSchedulerVehicleTabClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">6</div>
+            <div style="flex:1;height:14px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:33%;height:100%;background:var(--muted);border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:3px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Switched to the Partially Assigned tab</div>
+              <code style="font-size:12px;color:var(--muted)">plannerTripsPartiallyTabClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">6</div>
+            <div style="flex:1;height:14px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:33%;height:100%;background:var(--muted);border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:3px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Opened trip details from the frame</div>
+              <code style="font-size:12px;color:var(--muted)">plannerTripFrameLinkClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">5</div>
+            <div style="flex:1;height:14px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:28%;height:100%;background:var(--muted);border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:3px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Expanded scheduler to full screen</div>
+              <code style="font-size:12px;color:var(--muted)">plannerSchedulerFullScreenClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">5</div>
+            <div style="flex:1;height:14px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:28%;height:100%;background:var(--muted);border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:3px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Opened trip overview via link</div>
+              <code style="font-size:12px;color:var(--muted)">plannerTripOVLinkClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">5</div>
+            <div style="flex:1;height:14px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:28%;height:100%;background:var(--muted);border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:3px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Assigned a vehicle in trip overview</div>
+              <code style="font-size:12px;color:var(--muted)">plannerTripOVVehicleAssigned</code>
+            </div>
+          </div>
+        </div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Completion rate</div>
+      <div class="card-body">
+        <svg viewBox="0 0 160 160" width="160" height="160" style="display:block;margin:0 auto">
+      <path d="M 41.8 118.2 A 54 54 0 1 1 118.2 118.2" fill="none" style="stroke:var(--subtle)" stroke-width="16" stroke-linecap="round"/>
+      <path d="M 41.8 118.2 A 54 54 0 0 1 33.7 52.2" fill="none" style="stroke:var(--critical)" stroke-width="16" stroke-linecap="round"/>
+      <text x="80" y="74" text-anchor="middle" font-size="24" font-weight="500" style="fill:var(--critical)" font-family="system-ui,sans-serif">28%</text>
+      <text x="80" y="92" text-anchor="middle" font-size="12" style="fill:var(--critical)" font-family="system-ui,sans-serif">Needs attention ✗</text>
+      <text x="80" y="107" text-anchor="middle" font-size="11" style="fill:var(--muted)" font-family="system-ui,sans-serif">Target ≥60%</text>
+    </svg>
+        <div style="margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1rem;text-align:center">
+          <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem">Events firing</div>
+          <svg viewBox="0 0 160 160" width="160" height="160" style="display:block;margin:0 auto">
+      <circle cx="80" cy="80" r="52" fill="none" style="stroke:var(--subtle)" stroke-width="16"/>
+      <path d="M 80.0 28.0 A 52 52 0 1 1 69.2 130.9" fill="none" style="stroke:var(--success)" stroke-width="16" stroke-linecap="butt"/>
+      <path d="M 69.2 130.9 A 52 52 0 0 1 79.9 28.0" fill="none" style="stroke:var(--critical)" stroke-width="16" stroke-linecap="butt"/>
+      <text x="80" y="86" text-anchor="middle" font-size="16" font-weight="500" style="fill:var(--text)" font-family="system-ui,sans-serif">41/77</text>
+      <text x="80" y="102" text-anchor="middle" font-size="11" style="fill:var(--muted)" font-family="system-ui,sans-serif">firing</text>
+    </svg>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Session quality</div>
+      <div class="card-body">
+        <svg viewBox="0 0 220 154" width="100%" style="display:block;max-width:240px;margin:0 auto">
+      <rect x="4" y="6" width="10" height="10" rx="2" style="fill:var(--brand)"/>
+      <text x="18" y="15" font-size="11" style="fill:var(--muted);font-family:system-ui,sans-serif">Filter users</text>
+      <rect x="90" y="6" width="10" height="10" rx="2" style="fill:var(--border)"/>
+      <text x="104" y="15" font-size="11" style="fill:var(--muted);font-family:system-ui,sans-serif">All users</text>
+      
+      <rect x="16" y="45" width="16" height="89" rx="2" style="fill:var(--brand)" opacity="0.9"/>
+      <rect x="35" y="101" width="16" height="33" rx="2" style="fill:var(--border)" opacity="0.9"/>
+      <text x="33" y="150" text-anchor="middle" font-size="10" style="fill:var(--muted)" font-family="system-ui,sans-serif">Active time</text>
+      <rect x="67" y="40" width="16" height="94" rx="2" style="fill:var(--brand)" opacity="0.9"/>
+      <rect x="86" y="24" width="16" height="110" rx="2" style="fill:var(--border)" opacity="0.9"/>
+      <text x="84" y="150" text-anchor="middle" font-size="10" style="fill:var(--muted)" font-family="system-ui,sans-serif">Duration</text>
+      <rect x="118" y="132" width="16" height="2" rx="2" style="fill:var(--brand)" opacity="0.9"/>
+      <rect x="137" y="132" width="16" height="2" rx="2" style="fill:var(--border)" opacity="0.9"/>
+      <text x="135" y="150" text-anchor="middle" font-size="10" style="fill:var(--muted)" font-family="system-ui,sans-serif">Pages</text>
+    </svg>
+        <div style="margin-top:1rem">
+          <div style="margin-bottom:12px">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:4px">Avg active time</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+            <div style="width:76px;font-size:12px;color:var(--muted);text-align:right;flex-shrink:0">Filter users</div>
+            <div style="flex:1;height:10px;background:var(--subtle);border-radius:3px;overflow:hidden">
+              <div style="width:100%;height:100%;background:var(--success);border-radius:3px"></div>
+            </div>
+            <div style="width:52px;font-size:13px;font-weight:500;color:var(--text)">11m 4s</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:76px;font-size:12px;color:var(--muted);text-align:right;flex-shrink:0">All users</div>
+            <div style="flex:1;height:10px;background:var(--subtle);border-radius:3px;overflow:hidden">
+              <div style="width:37%;height:100%;background:var(--border);border-radius:3px"></div>
+            </div>
+            <div style="width:52px;font-size:13px;color:var(--muted)">4m 4s</div>
+          </div>
+        </div><div style="margin-bottom:12px">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:4px">Avg session duration</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+            <div style="width:76px;font-size:12px;color:var(--muted);text-align:right;flex-shrink:0">Filter users</div>
+            <div style="flex:1;height:10px;background:var(--subtle);border-radius:3px;overflow:hidden">
+              <div style="width:85%;height:100%;background:var(--critical);border-radius:3px"></div>
+            </div>
+            <div style="width:52px;font-size:13px;font-weight:500;color:var(--text)">11m 43s</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:76px;font-size:12px;color:var(--muted);text-align:right;flex-shrink:0">All users</div>
+            <div style="flex:1;height:10px;background:var(--subtle);border-radius:3px;overflow:hidden">
+              <div style="width:100%;height:100%;background:var(--border);border-radius:3px"></div>
+            </div>
+            <div style="width:52px;font-size:13px;color:var(--muted)">13m 45s</div>
+          </div>
+        </div><div style="margin-bottom:12px">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:4px">Avg pages / session</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+            <div style="width:76px;font-size:12px;color:var(--muted);text-align:right;flex-shrink:0">Filter users</div>
+            <div style="flex:1;height:10px;background:var(--subtle);border-radius:3px;overflow:hidden">
+              <div style="width:96%;height:100%;background:var(--critical);border-radius:3px"></div>
+            </div>
+            <div style="width:52px;font-size:13px;font-weight:500;color:var(--text)">9.8</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:76px;font-size:12px;color:var(--muted);text-align:right;flex-shrink:0">All users</div>
+            <div style="flex:1;height:10px;background:var(--subtle);border-radius:3px;overflow:hidden">
+              <div style="width:100%;height:100%;background:var(--border);border-radius:3px"></div>
+            </div>
+            <div style="width:52px;font-size:13px;color:var(--muted)">10.2</div>
+          </div>
+        </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:6px">Based on 250+ sessions</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart row 2 — same 3-column tracks -->
+  <div class="chart-row">
+    <div class="card">
+      <div class="card-title">All event interactions</div>
+      <div class="card-body">
+        <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 0">Scheduler</div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">16</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:89%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Switched to the Trailer tab</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerTrailerTabClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">11</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:61%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Switched to the Driver tab</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerDriverTabClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">8</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:44%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Switched to the Vehicle tab</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerVehicleTabClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">5</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:28%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Expanded scheduler to full screen</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerFullScreenClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">4</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:22%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Zoomed in on the scheduler</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerZoomedIn</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">3</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:17%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Navigated within the scheduler timeline</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerNavigationClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">3</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:17%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Zoomed out on the scheduler</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerZoomedOut</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">3</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:17%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Scrolled the scheduler back in time</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerMovedLeft</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">2</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:11%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Exited full screen on the scheduler</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerCloseFullScreenClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">2</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:11%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Scrolled the scheduler forward in time</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerMovedRight</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">1</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:6%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Applied a scheduler filter</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerFilterApplied</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Applied a scheduler preset</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerPresetApplied</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Refreshed the scheduler</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerRefreshClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Changed a scheduler setting</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerSettingApplied</code>
+            </div>
+          </div>
+        </div><div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 0">Scheduler Resources</div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">4</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:22%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Searched for a trailer</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerTrailerSearchApplied</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">2</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:11%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Edited a trailer on a pickup unit</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerPUTrailerEdited</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">1</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:6%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a driver to a pickup unit</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerPUDriverAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">1</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:6%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Searched for a vehicle</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerVehicleSearchApplied</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a vehicle to a pickup unit</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerPUVehicleAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a trailer to a pickup unit</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerPUTrailerAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Searched for a driver</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerDriverSearchApplied</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Edited a vehicle on a pickup unit</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerPUVehicleEdited</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Edited a driver on a pickup unit</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerPUDriverEdited</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Removed a vehicle from a pickup unit</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerPUVehicleDeleted</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Removed a trailer from a pickup unit</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerPUTrailerDeleted</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Removed a driver from a pickup unit</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerSchedulerPUDriverDeleted</code>
+            </div>
+          </div>
+        </div><div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 0">Trips Panel</div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">18</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:100%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Opened a trip from the list</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripsClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">9</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:50%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Searched within the trips panel</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripsSearchApplied</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">6</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:33%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Switched to the Partially Assigned tab</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripsPartiallyTabClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">3</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:17%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Expanded trips panel to full screen</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripsFullScreenClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">2</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:11%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Clicked to create a new trip</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripsCreateTripClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">2</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:11%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Switched to the To Be Assigned tab</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripsTobeAssignedTabClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">2</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:11%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Exited full screen on the trips panel</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripsCloseFullScreenClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">2</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:11%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Assigned a trip via drag and drop</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripsAssignedDragDropped</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">1</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:6%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Collapsed the trips panel</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripsCollapsed</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">1</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:6%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Expanded the trips panel</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripsExpanded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Applied a sort to the trips list</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripsSortApplied</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Opened trip details via link</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripsLinkClicked</code>
+            </div>
+          </div>
+        </div><div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 0">Trip Frame</div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">6</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:33%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Opened trip details from the frame</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripFrameLinkClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">4</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:22%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Confirmed schedule via right-click</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripFrameConfirmSchedRightClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">2</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:11%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Unassigned a trip via right-click</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripFrameUnassignTripRightClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Unassigned a pickup unit via right-click</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripFrameUnassignPURightClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Assigned a vehicle via right-click</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripFrameAssignVehicleRightClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Assigned a trailer via right-click</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripFrameAssignTrailerRightClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Assigned a driver via right-click</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripFrameAssignDriverRightClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Reassigned a vehicle via right-click</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripFrameReassignedVehicleRightClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Reassigned a trailer via right-click</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripFrameReassignedTrailerRightClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Reassigned a driver via right-click</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripFrameReassignedDriverRightClicked</code>
+            </div>
+          </div>
+        </div><div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 0">Trip Overview</div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">5</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:28%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Opened trip overview via link</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVLinkClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">5</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:28%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Assigned a vehicle in trip overview</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVVehicleAssigned</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">5</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:28%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Assigned a trailer in trip overview</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVTrailerAssigned</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">5</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:28%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Assigned a driver in trip overview</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVDriverAssigned</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">5</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:28%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Saved changes in trip overview</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVChangesSaved</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">1</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:6%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Clicked confirm schedule from ellipsis menu</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVConfirmSchedEllipsisClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">1</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:6%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Selected a vehicle to swap</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVSwapVehicleSelected</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">1</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:6%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Selected a driver to swap</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVSwapDriverSelected</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Clicked unassign from the ellipsis menu</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVUnassignedEllipsisClicked</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Reset unsaved changes in trip overview</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVChangesReset</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Clicked to edit the original assignment</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVEditOriginalAssignmentClicked</code>
+            </div>
+          </div>
+        </div><div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 0">Trip Overview — Stops</div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">3</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:17%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a stop to the trip</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVStopAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">3</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:17%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a trip start point</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVStartAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">2</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:11%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Edited an existing stop</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVStopEdited</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">2</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:11%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a trip end point</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVEndAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">1</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:6%;height:100%;background:var(--muted);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a maintenance stop</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVMaintenanceAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Reordered an order stop by dragging</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVOrderStopDragged</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Moved a non-order stop by dragging</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVNonOrderStopDragged</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Deleted a stop from the trip</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVStopDeleted</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a fueling stop</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVFuelingAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a parking stop</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVParkingAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a resting stop</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVRestingAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a customs clearance stop</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVClearingCustomsAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a ferry embarkation stop</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVFerryEmbarkAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a ferry disembarkation stop</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVFerryDisembarkAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a train embarkation stop</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVTrainEmbarkAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a train disembarkation stop</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVTrainDisembarkAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a resource swap stop</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVResourceSwapAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--muted)">—</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:0%;height:100%;background:var(--border);border-radius:4px;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:16px;font-weight:600;color:var(--text);line-height:1.3">Added a trailer drop-off stop</div>
+              <code style="font-size:13px;color:var(--muted);display:block;margin-top:2px">plannerTripOVTrailerDropOffAdded</code>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:14px;color:var(--muted);margin-top:12px;margin-left:56px">2026-04-10 – 2026-04-14</div>
+      </div>
+    </div>
+    <div class="card span2">
+      <div class="card-title">Key findings</div>
+      <div class="card-body"><div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:var(--warning-bg);border-radius:8px;margin-bottom:8px">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--warning);flex-shrink:0;margin-top:4px"></div>
+          <div style="font-size:16px;color:var(--text);line-height:1.6"><strong>36 events have 0 interactions</strong> since launch — check instrumentation or these flows haven't been used yet.</div>
+        </div><div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:var(--success-bg);border-radius:8px;margin-bottom:8px">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--success);flex-shrink:0;margin-top:4px"></div>
+          <div style="font-size:16px;color:var(--text);line-height:1.6"><strong>savedViewClicked (450)</strong> is the most-used event — users are actively adopting saved views.</div>
+        </div><div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:var(--success-bg);border-radius:8px;margin-bottom:8px">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--success);flex-shrink:0;margin-top:4px"></div>
+          <div style="font-size:16px;color:var(--text);line-height:1.6">Filter users are <strong>2.7× more actively engaged</strong> than the site average (11m 4s active time vs 4m 4s).</div>
+        </div><div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:var(--success-bg);border-radius:8px;margin-bottom:8px">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--success);flex-shrink:0;margin-top:4px"></div>
+          <div style="font-size:16px;color:var(--text);line-height:1.6"><strong>94% engagement rate</strong> — filter users are almost never idle (vs 30% site-wide).</div>
+        </div><div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:var(--subtle);border-radius:8px;margin-bottom:8px">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0;margin-top:4px"></div>
+          <div style="font-size:16px;color:var(--muted);line-height:1.6">All <strong>77 events instrumented</strong> · 41 firing · 36 silent since 2026-04-10.</div>
+        </div></div>
+    </div>
+  </div>
+
+  
+  <div style="margin-bottom:1rem">
+    <div style="font-size:20px;font-weight:500;color:var(--text);margin-bottom:4px">Measurement plan</div>
+    <div style="font-size:16px;color:var(--muted);margin-bottom:16px">Trip Planner epic · linked to the post-launch measurement framework</div>
+
+    <!-- Phase stepper -->
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-title">Current phase</div>
+      
+        <div style="display:flex;align-items:flex-start;gap:0;padding:0 12px;margin:8px 0 20px">
+          
+            <div style="display:flex;flex-direction:column;align-items:center;text-align:center;min-width:100px">
+              <div style="width:14px;height:14px;border-radius:50%;background:var(--border);border:2px solid var(--border);margin-bottom:6px"></div>
+              <div style="font-size:16px;font-weight:400;color:var(--muted)">Pre-launch baseline</div>
+              <div style="font-size:16px;color:var(--muted);margin-top:2px">Pre Apr 10</div>
+            </div>
+            <div style="flex:1;height:2px;background:var(--border);margin-top:-1px"></div>
+            <div style="display:flex;flex-direction:column;align-items:center;text-align:center;min-width:100px">
+              <div style="width:14px;height:14px;border-radius:50%;background:var(--brand);border:2px solid var(--brand);margin-bottom:6px"></div>
+              <div style="font-size:16px;font-weight:600;color:var(--text)">Discovery</div>
+              <div style="font-size:16px;color:var(--brand);margin-top:2px">Week 1–2</div>
+            </div>
+            <div style="flex:1;height:2px;background:var(--border);margin-top:-1px"></div>
+            <div style="display:flex;flex-direction:column;align-items:center;text-align:center;min-width:100px">
+              <div style="width:14px;height:14px;border-radius:50%;background:var(--border);border:2px solid var(--border);margin-bottom:6px"></div>
+              <div style="font-size:16px;font-weight:400;color:var(--muted)">Adoption</div>
+              <div style="font-size:16px;color:var(--muted);margin-top:2px">Week 3–6</div>
+            </div>
+            <div style="flex:1;height:2px;background:var(--border);margin-top:-1px"></div>
+            <div style="display:flex;flex-direction:column;align-items:center;text-align:center;min-width:100px">
+              <div style="width:14px;height:14px;border-radius:50%;background:var(--border);border:2px solid var(--border);margin-bottom:6px"></div>
+              <div style="font-size:16px;font-weight:400;color:var(--muted)">6-week review</div>
+              <div style="font-size:16px;color:var(--muted);margin-top:2px">Apr 10 + 6wk</div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Primary metric + funnel -->
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-title">Primary metric — Trip Save Rate</div>
+      <div style="font-size:16px;color:var(--muted);margin-bottom:16px">Users who save trip changes ÷ users who open a trip</div>
+      
+        <div style="display:flex;gap:24px;align-items:flex-start">
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px">Entry → Apply funnel</div>
+            
+            <div style="margin-bottom:10px">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+                <div style="width:24px;height:24px;border-radius:50%;background:var(--subtle);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted);flex-shrink:0">1</div>
+                <div style="font-size:16px;color:var(--text)">Opened a trip</div>
+                
+                <div style="margin-left:auto;font-size:16px;font-weight:500;color:var(--text)">18</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;margin-left:26px">
+                <div style="flex:1;height:10px;background:var(--subtle);border-radius:3px;overflow:hidden">
+                  <div style="width:100%;height:100%;background:var(--brand);border-radius:3px"></div>
+                </div>
+              </div>
+            </div>
+            <div style="margin-bottom:10px">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+                <div style="width:24px;height:24px;border-radius:50%;background:var(--subtle);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted);flex-shrink:0">2</div>
+                <div style="font-size:16px;color:var(--text)">Assigned a resource</div>
+                <span style="font-size:16px;color:var(--critical);margin-left:6px">▼ 72% from entry</span>
+                <div style="margin-left:auto;font-size:16px;font-weight:500;color:var(--text)">5</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;margin-left:26px">
+                <div style="flex:1;height:10px;background:var(--subtle);border-radius:3px;overflow:hidden">
+                  <div style="width:28%;height:100%;background:var(--brand);border-radius:3px"></div>
+                </div>
+              </div>
+            </div>
+            <div style="margin-bottom:10px">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+                <div style="width:24px;height:24px;border-radius:50%;background:var(--subtle);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted);flex-shrink:0">3</div>
+                <div style="font-size:16px;color:var(--text)">Saved changes</div>
+                <span style="font-size:16px;color:var(--critical);margin-left:6px">▼ 72% from entry</span>
+                <div style="margin-left:auto;font-size:16px;font-weight:500;color:var(--text)">5</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;margin-left:26px">
+                <div style="flex:1;height:10px;background:var(--subtle);border-radius:3px;overflow:hidden">
+                  <div style="width:28%;height:100%;background:var(--brand);border-radius:3px"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div style="display:flex;gap:8px;align-items:flex-start;padding:10px 12px;background:var(--subtle);border-radius:8px;margin-top:4px">
+              <div style="font-size:14px;flex-shrink:0;margin-top:1px">ℹ️</div>
+              <div style="font-size:16px;color:var(--muted);line-height:1.6">
+                <strong style="color:var(--text)">These steps aren't strictly sequential.</strong>
+                Users can apply a filter without expanding the accordion (e.g. via chips or preset options),
+                so "Applied filter" can exceed "Explored drawer". Drop-off % always compares back to the entry point (step 1).
+              </div>
+            </div>
+            
+            <div style="display:flex;gap:8px;align-items:flex-start;padding:9px 12px;background:var(--warning-bg);border-radius:8px;margin-top:8px">
+              <div style="width:7px;height:7px;border-radius:50%;background:var(--warning);flex-shrink:0;margin-top:4px"></div>
+              <div style="font-size:16px;color:var(--text);line-height:1.6"><strong>72% of users who opened the filter never expanded the drawer.</strong> They may have found what they needed immediately, or got confused and left. Worth watching as volume grows.</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:flex-start;padding:9px 12px;background:var(--critical-bg);border-radius:8px;margin-top:8px">
+              <div style="width:7px;height:7px;border-radius:50%;background:var(--critical);flex-shrink:0;margin-top:4px"></div>
+              <div style="font-size:16px;color:var(--text);line-height:1.6">Only <strong>28% of users who opened the filter applied one</strong> — below the 60% target. Investigate drop-off.</div>
+            </div>
+          </div>
+          <div style="text-align:center;padding:20px 28px;background:var(--subtle);border-radius:12px;min-width:150px;flex-shrink:0">
+            <div style="font-size:16px;color:var(--muted);margin-bottom:6px">Completion rate</div>
+            <div style="font-size:38px;font-weight:500;color:var(--critical);line-height:1">28%</div>
+            <div style="font-size:16px;color:var(--critical);margin-top:8px;font-weight:500">Needs attention ✗</div>
+            <div style="font-size:16px;color:var(--muted);margin-top:6px">Target ≥60%</div>
+          </div>
+        </div>
+    </div>
+
+    <!-- Secondary metrics -->
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-title">Secondary metrics</div>
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border)">
+            <th style="padding:8px 12px;text-align:left;font-size:16px;color:var(--muted);font-weight:500">Metric</th>
+            <th style="padding:8px 12px;text-align:right;font-size:16px;color:var(--muted);font-weight:500;width:80px">Value</th>
+            <th style="padding:8px 12px;text-align:center;font-size:16px;color:var(--muted);font-weight:500;width:110px">Trend</th>
+            <th style="padding:8px 12px;text-align:left;font-size:16px;color:var(--muted);font-weight:500">Interpretation</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+            <tr>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                <div style="font-size:16px;font-weight:500;color:var(--text)">Drag-drop Assignments</div>
+                <div style="font-size:16px;color:var(--muted);margin-top:2px">plannerTripsAssignedDragDropped — trips assigned via drag</div>
+              </td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border);text-align:right">
+                <div style="font-size:20px;font-weight:500;color:var(--brand)">2</div>
+              </td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border);text-align:center">
+                
+              </td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                <div style="font-size:16px;color:var(--muted);font-style:italic">Rising = users comfortable with direct scheduler interaction</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                <div style="font-size:16px;font-weight:500;color:var(--text)">Stop Additions</div>
+                <div style="font-size:16px;color:var(--muted);margin-top:2px">plannerTripOVStopAdded — custom stops added to trips</div>
+              </td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border);text-align:right">
+                <div style="font-size:20px;font-weight:500;color:var(--brand)">3</div>
+              </td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border);text-align:center">
+                
+              </td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                <div style="font-size:16px;color:var(--muted);font-style:italic">High = planners are customising routes; low = using defaults</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                <div style="font-size:16px;font-weight:500;color:var(--text)">Right-click Adoption</div>
+                <div style="font-size:16px;color:var(--muted);margin-top:2px">Frame context-menu actions (assign/unassign/confirm via right-click)</div>
+              </td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border);text-align:right">
+                <div style="font-size:20px;font-weight:500;color:var(--success)">22%</div>
+              </td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border);text-align:center">
+                
+              </td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                <div style="font-size:16px;color:var(--muted);font-style:italic">Rising = power users discovering context menu shortcuts</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                <div style="font-size:16px;font-weight:500;color:var(--text)">Reset Rate</div>
+                <div style="font-size:16px;color:var(--muted);margin-top:2px">Changes reset ÷ changes saved — users backing out of edits</div>
+              </td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border);text-align:right">
+                <div style="font-size:20px;font-weight:500;color:var(--success)">0%</div>
+              </td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border);text-align:center">
+                
+              </td>
+              <td style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                <div style="font-size:16px;color:var(--muted);font-style:italic">High = users making mistakes or exploring without intent</div>
+              </td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Guardrail metrics -->
+    <div class="card">
+      <div class="card-title">Guardrail metrics</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+                <div style="font-size:16px;font-weight:500;color:var(--text)">Unassign rate</div>
+                <div style="font-size:14px;font-weight:500;color:var(--critical);padding:2px 8px;background:var(--critical)18;border-radius:20px">⚠ Elevated</div>
+              </div>
+              <div style="font-size:22px;font-weight:500;color:var(--critical);margin-bottom:6px">40%</div>
+              <div style="font-size:16px;color:var(--muted)">(Unassign trip + unassign PU right-clicks) ÷ trips saved</div>
+              <div style="font-size:16px;color:var(--muted);margin-top:4px;font-style:italic">If >20%: planners are frequently reversing assignments</div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+                <div style="font-size:16px;font-weight:500;color:var(--text)">Scheduler navigation depth</div>
+                <div style="font-size:14px;font-weight:500;color:var(--success);padding:2px 8px;background:var(--success)18;border-radius:20px">✓ OK</div>
+              </div>
+              <div style="font-size:22px;font-weight:500;color:var(--success);margin-bottom:6px">67%</div>
+              <div style="font-size:16px;color:var(--muted)">Zoom + move interactions per session — proxy for orientation effort</div>
+              <div style="font-size:16px;color:var(--muted);margin-top:4px;font-style:italic">Very high = scheduler is hard to navigate; low = users orient quickly</div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+                <div style="font-size:16px;font-weight:500;color:var(--text)">Create trip engagement</div>
+                <div style="font-size:14px;font-weight:500;color:var(--success);padding:2px 8px;background:var(--success)18;border-radius:20px">Active</div>
+              </div>
+              <div style="font-size:22px;font-weight:500;color:var(--success);margin-bottom:6px">2</div>
+              <div style="font-size:16px;color:var(--muted)">plannerTripsCreateTripClicked — new trip creation attempts</div>
+              <div style="font-size:16px;color:var(--muted);margin-top:4px;font-style:italic">Low = planners not initiating new trips; check entry point visibility</div>
+            </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Generated by Claude · Microsoft Clarity GraphQL API · CtrlChain Design Ops · Apr 16, 2026</div>
+</div>
+</body>
+</html>
