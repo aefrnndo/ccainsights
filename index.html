@@ -7,48 +7,48 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 
-/* Light mode — CCA design tokens */
+/* ── Light mode */
 [data-theme="light"]{
-  --bg:#F8F8F7;             /* neutrals-50 */
+  --bg:#F8F8F7;           /* neutrals-50 */
   --surface:#FFFFFF;
-  --border:#D9D9D6;         /* neutrals-300 */
-  --text:#1C1C1A;           /* neutrals-800 */
-  --muted:#6B6B63;          /* neutrals-500 */
-  --subtle:#F0F0EE;         /* neutrals-100 */
+  --border:#CBCBC6;       /* neutrals-300 */
+  --text:#1C1C1A;         /* neutrals-800 */
+  --muted:#6B6B63;        /* neutrals-500 */
+  --subtle:#F0F0EE;       /* neutrals-100 */
   --shadow:0 1px 4px rgba(0,0,0,.07);
-  --brand:#2E7D32;          /* green-700 = text-brand-dark */
-  --brand-bg:#F1F8E9;       /* green-50 */
-  --success:#2E7D32;        /* green-700 */
-  --success-bg:#F1F8E9;     /* green-50 */
-  --warning:#B45309;        /* orange-700 */
-  --warning-bg:#FFF7ED;     /* orange-50 */
-  --critical:#B91C1C;       /* red-700 */
-  --critical-bg:#FEF2F2;    /* red-50 */
-  --nav-bg:#1E3A5F;         /* newCold-500 — sidebar-main-bg */
-  --nav-text:#DBEAFE;       /* newCold-100 */
-  --nav-muted:#93C5FD;      /* newCold-200 */
-  --nav-border:#1E40AF;     /* newCold-600 */
+  --brand:#16a34a;        /* green-600 — surface-brand-default */
+  --brand-bg:#f0fdf4;     /* green-50 */
+  --success:#16a34a;      /* green-600 — success-surface */
+  --success-bg:#f0fdf4;   /* green-50 */
+  --warning:#c2410c;      /* orange-700 — warning-surface */
+  --warning-bg:#fff7ed;   /* orange-50 */
+  --critical:#b91c1c;     /* red-700 — critical-surface */
+  --critical-bg:#fef2f2;  /* red-50 */
+  --nav-bg:#1E3A5F;       /* newCold-500 — sidebar-main-bg-default */
+  --nav-text:#DBEAFE;     /* newCold-100 */
+  --nav-muted:#93C5FD;    /* newCold-300 */
+  --nav-border:#1E40AF;   /* newCold-600 */
   --nav-logo:#FFFFFF;
 }
 
-/* Dark mode — CCA design tokens */
+/* ── Dark mode */
 [data-theme="dark"]{
-  --bg:#111827;             /* neutrals-900 */
-  --surface:#1F2937;        /* neutrals-800 */
-  --border:#374151;         /* neutrals-700 */
-  --text:#F3F4F6;           /* neutrals-100 */
-  --muted:#9CA3AF;          /* neutrals-400 */
-  --subtle:#1F2937;         /* neutrals-800 */
+  --bg:#111110;           /* neutrals-900 */
+  --surface:#1C1C1A;      /* neutrals-800 */
+  --border:#333330;       /* neutrals-700 */
+  --text:#F0F0EE;         /* neutrals-100 — text-neutral-body */
+  --muted:#A8A8A3;        /* neutrals-400 */
+  --subtle:#222220;
   --shadow:none;
-  --brand:#86EFAC;          /* green-300 = text-brand-default dark */
-  --brand-bg:#14532D;       /* green-900 */
-  --success:#86EFAC;        /* green-300 */
-  --success-bg:#14532D;     /* green-900 */
-  --warning:#FCD34D;        /* orange-300 */
-  --warning-bg:#451A03;     /* orange-950 */
-  --critical:#FCA5A5;       /* red-300 */
-  --critical-bg:#450A0A;    /* red-950 */
-  --nav-bg:#1E3A5F;         /* newCold-500 — same as light */
+  --brand:#86efac;        /* green-300 — text-brand-default dark */
+  --brand-bg:#14532d;     /* green-900 */
+  --success:#86efac;      /* green-300 */
+  --success-bg:#14532d;
+  --warning:#fdba74;      /* orange-300 */
+  --warning-bg:#431407;   /* orange-950 */
+  --critical:#fca5a5;     /* red-300 */
+  --critical-bg:#7f1d1d;  /* red-900 */
+  --nav-bg:#1E3A5F;       /* newCold-500 — identical in both modes */
   --nav-text:#DBEAFE;
   --nav-muted:#93C5FD;
   --nav-border:#1E40AF;
@@ -291,7 +291,7 @@ function toggleTheme(){
           <div class="epic-name">Filter epic</div>
           <span class="badge">Discovery · Wk 1–2</span>
         </div>
-        <div class="epic-rate-num" style="color:#1D9E75">66%</div>
+        <div class="epic-rate-num" style="color:#16a34a">66%</div>
         <div class="epic-rate-lbl">Task completion rate · On target</div>
         <div class="epic-stats">
           <div><div class="estat-val">784</div><div class="estat-lbl">Interactions</div></div>
