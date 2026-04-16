@@ -74,29 +74,37 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .badge{font-size:11px;padding:3px 10px;border-radius:20px;
   background:rgba(255,255,255,.12);color:var(--nav-text);font-weight:500;white-space:nowrap}
 .wrap{max-width:75vw;margin:0 auto;padding:2.5rem 2rem}
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1rem}
+/* Shared 3-column tracks: col1=2fr, col2=1fr, col3=1fr — metrics + grid both use these */
+.page-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:1rem;margin-bottom:1rem}
+/* Metrics row: col1 holds 2 cards side-by-side, col2 and col3 hold one each */
+.metric-pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .metric{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
-.metric-label{font-size:16px;color:var(--muted);margin-bottom:6px}
+.metric-label{font-size:14px;color:var(--muted);margin-bottom:6px}
 .metric-value{font-size:24px;font-weight:500;line-height:1.2;color:var(--text)}
-.metric-sub{font-size:16px;color:var(--muted);margin-top:4px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.metric-sub{font-size:13px;color:var(--muted);margin-top:4px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
 .card-title{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
-/* Unified 3-column grid — both chart rows share the same column tracks so they align */
-.main-grid{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:520px 520px;gap:1rem;margin-bottom:1rem}
-.main-grid>.card{margin-bottom:0;overflow-y:scroll}
+/* Chart rows: fixed height, scrollable */
+.chart-row{display:grid;grid-template-columns:2fr 1fr 1fr;gap:1rem;margin-bottom:1rem}
+.chart-row>.card{margin-bottom:0;height:520px;overflow-y:scroll}
 .span2{grid-column:span 2}
+/* Visible scrollbar */
+.chart-row>.card::-webkit-scrollbar{width:5px}
+.chart-row>.card::-webkit-scrollbar-track{background:var(--subtle);border-radius:3px}
+.chart-row>.card::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 .footer{font-size:16px;color:var(--muted);text-align:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
 code{font-family:ui-monospace,monospace;font-size:12px;color:var(--muted)}
 table th{color:var(--muted);font-size:16px}
 table td{border-color:var(--border)!important;font-size:16px}
 @media(max-width:960px){
   .wrap{max-width:100%;padding:1.5rem 1.25rem}
-  .main-grid{grid-template-columns:1fr;grid-template-rows:auto}
+  .page-grid,.chart-row{grid-template-columns:1fr}
+  .metric-pair{grid-template-columns:1fr 1fr}
   .span2{grid-column:span 1}
-  .metrics{grid-template-columns:repeat(2,1fr)}
+  .chart-row>.card{height:auto;overflow-y:visible}
 }
 @media(max-width:500px){
-  .metrics{grid-template-columns:1fr}
+  .metric-pair{grid-template-columns:1fr}
 }
 </style>
 <script>
@@ -138,16 +146,19 @@ function toggleTheme(){
     <div style="font-size:13px;color:var(--muted);margin-top:3px">2026-04-10 – 2026-04-15 · Released 2026-04-10</div>
   </div>
 
-  <div class="metrics">
-    <div class="metric">
-      <div class="metric-label">Total interactions</div>
-      <div class="metric-value">1,104</div>
-      <div class="metric-sub">across 22 events since launch</div>
-    </div>
-    <div class="metric">
-      <div class="metric-label">Top event</div>
-      <div class="metric-value" style="font-size:15px">savedViewClicked</div>
-      <div class="metric-sub">513 interactions</div>
+  <!-- Metrics row — col1 has 2 cards side-by-side, cols 2+3 one each → matches chart columns -->
+  <div class="page-grid" style="margin-bottom:1rem">
+    <div class="metric-pair">
+      <div class="metric">
+        <div class="metric-label">Total interactions</div>
+        <div class="metric-value">1,104</div>
+        <div class="metric-sub">across 22 events since launch</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Top event</div>
+        <div class="metric-value" style="font-size:16px;font-weight:600">savedViewClicked</div>
+        <div class="metric-sub">513 interactions</div>
+      </div>
     </div>
     <div class="metric">
       <div class="metric-label">Firing / Silent</div>
@@ -161,9 +172,8 @@ function toggleTheme(){
     </div>
   </div>
 
-  <!-- Unified 2-row grid — columns align across both rows -->
-  <div class="main-grid">
-    <!-- Row 1 -->
+  <!-- Chart row 1 — same 3-column tracks as metrics -->
+  <div class="chart-row">
     <div class="card">
       <div class="card-title">Event interactions — top 10</div>
       
@@ -409,7 +419,10 @@ function toggleTheme(){
         <div style="font-size:12px;color:var(--muted);margin-top:6px">Based on 250+ sessions</div>
       </div>
     </div>
-    <!-- Row 2 — same column tracks -->
+  </div>
+
+  <!-- Chart row 2 — same 3-column tracks -->
+  <div class="chart-row">
     <div class="card">
       <div class="card-title">All event interactions</div>
       <div style="font-size:13px;font-weight:600;color:#2a628f;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 0">Filter Dropdown Interaction</div>
@@ -743,7 +756,7 @@ function toggleTheme(){
             </div>
           </div>
         </div>
-      <div style="font-size:16px;color:var(--muted);margin-top:12px;margin-left:56px">2026-04-10 – 2026-04-15</div>
+      <div style="font-size:14px;color:var(--muted);margin-top:12px;margin-left:56px">2026-04-10 – 2026-04-15</div>
     </div>
     <div class="card span2">
       <div class="card-title">Key findings</div>
