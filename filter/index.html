@@ -140,13 +140,13 @@ function toggleTheme(){
   <div class="metrics">
     <div class="metric">
       <div class="metric-label">Total interactions</div>
-      <div class="metric-value">1,069</div>
+      <div class="metric-value">1,071</div>
       <div class="metric-sub">across 22 events since launch</div>
     </div>
     <div class="metric">
       <div class="metric-label">Top event</div>
       <div class="metric-value" style="font-size:15px">savedViewClicked</div>
-      <div class="metric-sub">490 interactions</div>
+      <div class="metric-sub">492 interactions</div>
     </div>
     <div class="metric">
       <div class="metric-label">Firing / Silent</div>
@@ -162,47 +162,153 @@ function toggleTheme(){
 
   <!-- Charts row -->
   <div class="three-col">
-    <div class="card">
+    <div class="card scroll-card">
       <div class="card-title">Event interactions — top 12</div>
-      <svg viewBox="0 0 520 490" width="100%" style="display:block;overflow:visible">
       
-      <text x="220" y="27" text-anchor="end" font-size="14" font-weight="600" font-family="system-ui,sans-serif" fill="var(--text)">Switched to a saved view</text>
-      <rect x="232" y="14" width="236" height="22" rx="4" fill="#17476d" opacity="0.9"/>
-      <text x="474" y="29" font-size="14" font-family="system-ui,sans-serif" fill="var(--muted)">490</text>
-      <text x="220" y="67" text-anchor="end" font-size="14" font-weight="600" font-family="system-ui,sans-serif" fill="var(--text)">Clicked the filter button to open filter</text>
-      <rect x="232" y="54" width="88" height="22" rx="4" fill="#4b82af" opacity="0.9"/>
-      <text x="326" y="69" font-size="14" font-family="system-ui,sans-serif" fill="var(--muted)">182</text>
-      <text x="220" y="107" text-anchor="end" font-size="14" font-weight="600" font-family="system-ui,sans-serif" fill="var(--text)">Clicked Apply in the filter drawer</text>
-      <rect x="232" y="94" width="60" height="22" rx="4" fill="#638029" opacity="0.9"/>
-      <text x="298" y="109" font-size="14" font-family="system-ui,sans-serif" fill="var(--muted)">125</text>
-      <text x="220" y="147" text-anchor="end" font-size="14" font-weight="600" font-family="system-ui,sans-serif" fill="var(--text)">Expanded a filter category in the drawer</text>
-      <rect x="232" y="134" width="44" height="22" rx="4" fill="#b25900" opacity="0.9"/>
-      <text x="282" y="149" font-size="14" font-family="system-ui,sans-serif" fill="var(--muted)">91</text>
-      <text x="220" y="187" text-anchor="end" font-size="14" font-weight="600" font-family="system-ui,sans-serif" fill="var(--text)">Switched to the All view</text>
-      <rect x="232" y="174" width="33" height="22" rx="4" fill="#17476d" opacity="0.9"/>
-      <text x="271" y="189" font-size="14" font-family="system-ui,sans-serif" fill="var(--muted)">69</text>
-      <text x="220" y="227" text-anchor="end" font-size="14" font-weight="600" font-family="system-ui,sans-serif" fill="var(--text)">Collapsed a filter category in the drawer</text>
-      <rect x="232" y="214" width="12" height="22" rx="4" fill="#b25900" opacity="0.9"/>
-      <text x="250" y="229" font-size="14" font-family="system-ui,sans-serif" fill="var(--muted)">25</text>
-      <text x="220" y="267" text-anchor="end" font-size="14" font-weight="600" font-family="system-ui,sans-serif" fill="var(--text)">Opened the filter dropdown</text>
-      <rect x="232" y="254" width="8" height="22" rx="4" fill="#2a628f" opacity="0.9"/>
-      <text x="246" y="269" font-size="14" font-family="system-ui,sans-serif" fill="var(--muted)">16</text>
-      <text x="220" y="307" text-anchor="end" font-size="14" font-weight="600" font-family="system-ui,sans-serif" fill="var(--text)">Cleared all active filters</text>
-      <rect x="232" y="294" width="5" height="22" rx="4" fill="#9d1818" opacity="0.9"/>
-      <text x="243" y="309" font-size="14" font-family="system-ui,sans-serif" fill="var(--muted)">10</text>
-      <text x="220" y="347" text-anchor="end" font-size="14" font-weight="600" font-family="system-ui,sans-serif" fill="var(--text)">Searched for a filter name inside the drawer</text>
-      <rect x="232" y="334" width="4" height="22" rx="4" fill="#b25900" opacity="0.9"/>
-      <text x="242" y="349" font-size="14" font-family="system-ui,sans-serif" fill="var(--muted)">9</text>
-      <text x="220" y="387" text-anchor="end" font-size="14" font-weight="600" font-family="system-ui,sans-serif" fill="var(--text)">Opened view options on a saved view</text>
-      <rect x="232" y="374" width="4" height="22" rx="4" fill="#17476d" opacity="0.9"/>
-      <text x="242" y="389" font-size="14" font-family="system-ui,sans-serif" fill="var(--muted)">9</text>
-      <text x="220" y="427" text-anchor="end" font-size="14" font-weight="600" font-family="system-ui,sans-serif" fill="var(--text)">Saved a new view</text>
-      <rect x="232" y="414" width="4" height="22" rx="4" fill="#17476d" opacity="0.9"/>
-      <text x="242" y="429" font-size="14" font-family="system-ui,sans-serif" fill="var(--muted)">9</text>
-      <text x="220" y="467" text-anchor="end" font-size="14" font-weight="600" font-family="system-ui,sans-serif" fill="var(--text)">Removed a single filter chip</text>
-      <rect x="232" y="454" width="3" height="22" rx="4" fill="#9d1818" opacity="0.9"/>
-      <text x="241" y="469" font-size="14" font-family="system-ui,sans-serif" fill="var(--muted)">7</text>
-    </svg>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">492</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:100%;height:100%;background:#17476d;border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div style="font-size:16px;font-weight:600;color:var(--text)">Switched to a saved view</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">182</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:37%;height:100%;background:#4b82af;border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div style="font-size:16px;font-weight:600;color:var(--text)">Clicked the filter button to open filter</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">125</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:25%;height:100%;background:#638029;border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div style="font-size:16px;font-weight:600;color:var(--text)">Clicked Apply in the filter drawer</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">91</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:18%;height:100%;background:#b25900;border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div style="font-size:16px;font-weight:600;color:var(--text)">Expanded a filter category in the drawer</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">69</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:14%;height:100%;background:#17476d;border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div style="font-size:16px;font-weight:600;color:var(--text)">Switched to the All view</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">25</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:5%;height:100%;background:#b25900;border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div style="font-size:16px;font-weight:600;color:var(--text)">Collapsed a filter category in the drawer</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">16</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:3%;height:100%;background:#2a628f;border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div style="font-size:16px;font-weight:600;color:var(--text)">Opened the filter dropdown</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">10</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:2%;height:100%;background:#9d1818;border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div style="font-size:16px;font-weight:600;color:var(--text)">Cleared all active filters</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">9</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:2%;height:100%;background:#b25900;border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div style="font-size:16px;font-weight:600;color:var(--text)">Searched for a filter name inside the drawer</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">9</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:2%;height:100%;background:#17476d;border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div style="font-size:16px;font-weight:600;color:var(--text)">Opened view options on a saved view</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">9</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:2%;height:100%;background:#17476d;border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div style="font-size:16px;font-weight:600;color:var(--text)">Saved a new view</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">7</div>
+            <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
+              <div style="width:1%;height:100%;background:#9d1818;border-radius:4px;opacity:0.9;transition:width .3s"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <div style="width:48px;flex-shrink:0"></div>
+            <div style="font-size:16px;font-weight:600;color:var(--text)">Removed a single filter chip</div>
+          </div>
+        </div>
     </div>
     <div class="card">
       <div class="card-title">Completion rate</div>
@@ -335,7 +441,7 @@ function toggleTheme(){
           <div style="display:flex;align-items:center;gap:10px">
             <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">125</div>
             <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
-              <div style="width:26%;height:100%;background:#638029;border-radius:4px;transition:width .3s"></div>
+              <div style="width:25%;height:100%;background:#638029;border-radius:4px;transition:width .3s"></div>
             </div>
           </div>
           <div style="display:flex;gap:10px;margin-top:4px">
@@ -440,7 +546,7 @@ function toggleTheme(){
           <div style="display:flex;align-items:center;gap:10px">
             <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">91</div>
             <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
-              <div style="width:19%;height:100%;background:#b25900;border-radius:4px;transition:width .3s"></div>
+              <div style="width:18%;height:100%;background:#b25900;border-radius:4px;transition:width .3s"></div>
             </div>
           </div>
           <div style="display:flex;gap:10px;margin-top:4px">
@@ -498,7 +604,7 @@ function toggleTheme(){
         </div><div style="font-size:13px;font-weight:600;color:#17476d;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 0">View</div>
         <div style="margin-bottom:12px">
           <div style="display:flex;align-items:center;gap:10px">
-            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">490</div>
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">492</div>
             <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
               <div style="width:100%;height:100%;background:#17476d;border-radius:4px;transition:width .3s"></div>
             </div>
@@ -640,7 +746,7 @@ function toggleTheme(){
           <div style="font-size:16px;color:var(--text);line-height:1.6"><strong>3 events have 0 interactions</strong> since launch — check instrumentation or these flows haven't been used yet.</div>
         </div><div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:var(--success-bg);border-radius:8px;margin-bottom:8px">
           <div style="width:8px;height:8px;border-radius:50%;background:var(--success);flex-shrink:0;margin-top:4px"></div>
-          <div style="font-size:16px;color:var(--text);line-height:1.6"><strong>savedViewClicked (490)</strong> is the most-used event — users are actively adopting saved views.</div>
+          <div style="font-size:16px;color:var(--text);line-height:1.6"><strong>savedViewClicked (492)</strong> is the most-used event — users are actively adopting saved views.</div>
         </div><div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:var(--success-bg);border-radius:8px;margin-bottom:8px">
           <div style="width:8px;height:8px;border-radius:50%;background:var(--success);flex-shrink:0;margin-top:4px"></div>
           <div style="font-size:16px;color:var(--text);line-height:1.6">Filter users are <strong>2.7× more actively engaged</strong> than the site average (11m 4s active time vs 4m 4s).</div>
@@ -861,7 +967,7 @@ function toggleTheme(){
                 <div style="font-size:16px;font-weight:500;color:var(--text)">Saved view engagement</div>
                 <div style="font-size:14px;font-weight:500;color:var(--success);padding:2px 8px;background:var(--success)18;border-radius:20px">Active</div>
               </div>
-              <div style="font-size:22px;font-weight:500;color:var(--success);margin-bottom:6px">490</div>
+              <div style="font-size:22px;font-weight:500;color:var(--success);margin-bottom:6px">492</div>
               <div style="font-size:16px;color:var(--muted)">savedViewClicked — are saved views being recalled?</div>
               <div style="font-size:16px;color:var(--muted);margin-top:4px;font-style:italic">Low = users saving views but not returning to them</div>
             </div>
