@@ -81,17 +81,18 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .metric-sub{font-size:16px;color:var(--muted);margin-top:4px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1rem}
 .card-title{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
-.two-col{display:grid;grid-template-columns:3fr 2fr;gap:1rem;margin-bottom:1rem;align-items:start}
-.three-col{display:grid;grid-template-columns:2fr 1fr 1fr;gap:1rem;margin-bottom:1rem;align-items:stretch}
-.three-col>.card{margin-bottom:0;display:flex;flex-direction:column;overflow-y:auto;max-height:560px}
+/* Unified 3-column grid — both chart rows share the same column tracks so they align */
+.main-grid{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:520px 520px;gap:1rem;margin-bottom:1rem}
+.main-grid>.card{margin-bottom:0;overflow-y:scroll}
+.span2{grid-column:span 2}
 .footer{font-size:16px;color:var(--muted);text-align:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
 code{font-family:ui-monospace,monospace;font-size:12px;color:var(--muted)}
 table th{color:var(--muted);font-size:16px}
 table td{border-color:var(--border)!important;font-size:16px}
 @media(max-width:960px){
   .wrap{max-width:100%;padding:1.5rem 1.25rem}
-  .three-col{grid-template-columns:1fr}
-  .two-col{grid-template-columns:1fr}
+  .main-grid{grid-template-columns:1fr;grid-template-rows:auto}
+  .span2{grid-column:span 1}
   .metrics{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:500px){
@@ -140,13 +141,13 @@ function toggleTheme(){
   <div class="metrics">
     <div class="metric">
       <div class="metric-label">Total interactions</div>
-      <div class="metric-value">1,103</div>
+      <div class="metric-value">1,104</div>
       <div class="metric-sub">across 22 events since launch</div>
     </div>
     <div class="metric">
       <div class="metric-label">Top event</div>
       <div class="metric-value" style="font-size:15px">savedViewClicked</div>
-      <div class="metric-sub">512 interactions</div>
+      <div class="metric-sub">513 interactions</div>
     </div>
     <div class="metric">
       <div class="metric-label">Firing / Silent</div>
@@ -160,14 +161,15 @@ function toggleTheme(){
     </div>
   </div>
 
-  <!-- Charts row -->
-  <div class="three-col">
+  <!-- Unified 2-row grid — columns align across both rows -->
+  <div class="main-grid">
+    <!-- Row 1 -->
     <div class="card">
       <div class="card-title">Event interactions — top 10</div>
       
         <div style="margin-bottom:12px">
           <div style="display:flex;align-items:center;gap:10px">
-            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">512</div>
+            <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">513</div>
             <div style="flex:1;height:14px;background:var(--subtle);border-radius:4px;overflow:hidden">
               <div style="width:100%;height:100%;background:#17476d;border-radius:4px;opacity:0.9;transition:width .3s"></div>
             </div>
@@ -184,7 +186,7 @@ function toggleTheme(){
           <div style="display:flex;align-items:center;gap:10px">
             <div style="width:48px;font-size:16px;font-weight:600;text-align:right;flex-shrink:0;color:var(--text)">187</div>
             <div style="flex:1;height:14px;background:var(--subtle);border-radius:4px;overflow:hidden">
-              <div style="width:37%;height:100%;background:#4b82af;border-radius:4px;opacity:0.9;transition:width .3s"></div>
+              <div style="width:36%;height:100%;background:#4b82af;border-radius:4px;opacity:0.9;transition:width .3s"></div>
             </div>
           </div>
           <div style="display:flex;gap:10px;margin-top:3px">
@@ -338,21 +340,21 @@ function toggleTheme(){
     </div>
     <div class="card">
       <div class="card-title">Session quality</div>
-      <svg viewBox="0 0 220 140" width="100%" style="display:block;max-width:240px;margin:0 auto">
+      <svg viewBox="0 0 220 154" width="100%" style="display:block;max-width:240px;margin:0 auto">
       <rect x="4" y="6" width="10" height="10" rx="2" style="fill:var(--brand)"/>
       <text x="18" y="15" font-size="11" style="fill:var(--muted);font-family:system-ui,sans-serif">Filter users</text>
       <rect x="90" y="6" width="10" height="10" rx="2" style="fill:var(--border)"/>
       <text x="104" y="15" font-size="11" style="fill:var(--muted);font-family:system-ui,sans-serif">All users</text>
       
-      <rect x="16" y="36" width="16" height="84" rx="2" style="fill:var(--brand)" opacity="0.9"/>
-      <rect x="35" y="89" width="16" height="31" rx="2" style="fill:var(--border)" opacity="0.9"/>
-      <text x="33" y="135" text-anchor="middle" font-size="10" style="fill:var(--muted)" font-family="system-ui,sans-serif">Active time</text>
-      <rect x="67" y="31" width="16" height="89" rx="2" style="fill:var(--brand)" opacity="0.9"/>
-      <rect x="86" y="16" width="16" height="104" rx="2" style="fill:var(--border)" opacity="0.9"/>
-      <text x="84" y="135" text-anchor="middle" font-size="10" style="fill:var(--muted)" font-family="system-ui,sans-serif">Duration</text>
-      <rect x="118" y="119" width="16" height="1" rx="2" style="fill:var(--brand)" opacity="0.9"/>
-      <rect x="137" y="119" width="16" height="1" rx="2" style="fill:var(--border)" opacity="0.9"/>
-      <text x="135" y="135" text-anchor="middle" font-size="10" style="fill:var(--muted)" font-family="system-ui,sans-serif">Pages</text>
+      <rect x="16" y="45" width="16" height="89" rx="2" style="fill:var(--brand)" opacity="0.9"/>
+      <rect x="35" y="101" width="16" height="33" rx="2" style="fill:var(--border)" opacity="0.9"/>
+      <text x="33" y="150" text-anchor="middle" font-size="10" style="fill:var(--muted)" font-family="system-ui,sans-serif">Active time</text>
+      <rect x="67" y="40" width="16" height="94" rx="2" style="fill:var(--brand)" opacity="0.9"/>
+      <rect x="86" y="24" width="16" height="110" rx="2" style="fill:var(--border)" opacity="0.9"/>
+      <text x="84" y="150" text-anchor="middle" font-size="10" style="fill:var(--muted)" font-family="system-ui,sans-serif">Duration</text>
+      <rect x="118" y="132" width="16" height="2" rx="2" style="fill:var(--brand)" opacity="0.9"/>
+      <rect x="137" y="132" width="16" height="2" rx="2" style="fill:var(--border)" opacity="0.9"/>
+      <text x="135" y="150" text-anchor="middle" font-size="10" style="fill:var(--muted)" font-family="system-ui,sans-serif">Pages</text>
     </svg>
       <div style="margin-top:1rem">
         <div style="margin-bottom:12px">
@@ -407,10 +409,8 @@ function toggleTheme(){
         <div style="font-size:12px;color:var(--muted);margin-top:6px">Based on 250+ sessions</div>
       </div>
     </div>
-  </div>
-
-  <div class="two-col">
-    <div class="card scroll-card">
+    <!-- Row 2 — same column tracks -->
+    <div class="card">
       <div class="card-title">All event interactions</div>
       <div style="font-size:13px;font-weight:600;color:#2a628f;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 0">Filter Dropdown Interaction</div>
         <div style="margin-bottom:12px">
@@ -432,7 +432,7 @@ function toggleTheme(){
           <div style="display:flex;align-items:center;gap:10px">
             <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">187</div>
             <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
-              <div style="width:37%;height:100%;background:#4b82af;border-radius:4px;transition:width .3s"></div>
+              <div style="width:36%;height:100%;background:#4b82af;border-radius:4px;transition:width .3s"></div>
             </div>
           </div>
           <div style="display:flex;gap:10px;margin-top:4px">
@@ -610,7 +610,7 @@ function toggleTheme(){
         </div><div style="font-size:13px;font-weight:600;color:#17476d;text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 0">View</div>
         <div style="margin-bottom:12px">
           <div style="display:flex;align-items:center;gap:10px">
-            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">512</div>
+            <div style="width:48px;font-size:16px;text-align:right;flex-shrink:0;color:var(--text);font-weight:600">513</div>
             <div style="flex:1;height:16px;background:var(--subtle);border-radius:4px;overflow:hidden">
               <div style="width:100%;height:100%;background:#17476d;border-radius:4px;transition:width .3s"></div>
             </div>
@@ -745,14 +745,14 @@ function toggleTheme(){
         </div>
       <div style="font-size:16px;color:var(--muted);margin-top:12px;margin-left:56px">2026-04-10 – 2026-04-15</div>
     </div>
-    <div class="card">
+    <div class="card span2">
       <div class="card-title">Key findings</div>
       <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:var(--warning-bg);border-radius:8px;margin-bottom:8px">
           <div style="width:8px;height:8px;border-radius:50%;background:var(--warning);flex-shrink:0;margin-top:4px"></div>
           <div style="font-size:16px;color:var(--text);line-height:1.6"><strong>3 events have 0 interactions</strong> since launch — check instrumentation or these flows haven't been used yet.</div>
         </div><div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:var(--success-bg);border-radius:8px;margin-bottom:8px">
           <div style="width:8px;height:8px;border-radius:50%;background:var(--success);flex-shrink:0;margin-top:4px"></div>
-          <div style="font-size:16px;color:var(--text);line-height:1.6"><strong>savedViewClicked (512)</strong> is the most-used event — users are actively adopting saved views.</div>
+          <div style="font-size:16px;color:var(--text);line-height:1.6"><strong>savedViewClicked (513)</strong> is the most-used event — users are actively adopting saved views.</div>
         </div><div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:var(--success-bg);border-radius:8px;margin-bottom:8px">
           <div style="width:8px;height:8px;border-radius:50%;background:var(--success);flex-shrink:0;margin-top:4px"></div>
           <div style="font-size:16px;color:var(--text);line-height:1.6">Filter users are <strong>2.7× more actively engaged</strong> than the site average (11m 4s active time vs 4m 4s).</div>
@@ -973,7 +973,7 @@ function toggleTheme(){
                 <div style="font-size:16px;font-weight:500;color:var(--text)">Saved view engagement</div>
                 <div style="font-size:14px;font-weight:500;color:var(--success);padding:2px 8px;background:var(--success)18;border-radius:20px">Active</div>
               </div>
-              <div style="font-size:22px;font-weight:500;color:var(--success);margin-bottom:6px">512</div>
+              <div style="font-size:22px;font-weight:500;color:var(--success);margin-bottom:6px">513</div>
               <div style="font-size:16px;color:var(--muted)">savedViewClicked — are saved views being recalled?</div>
               <div style="font-size:16px;color:var(--muted);margin-top:4px;font-style:italic">Low = users saving views but not returning to them</div>
             </div>
