@@ -6,35 +6,76 @@
 <title>Design — CtrlChain Metrics</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+
+/* Light mode — CCA design tokens */
 [data-theme="light"]{
-  --bg:#f5f5f3;--surface:#ffffff;--border:#e4e4e2;--text:#1a1a18;
-  --muted:#88887e;--subtle:#efefed;--shadow:0 1px 4px rgba(0,0,0,.07);
+  --bg:#F8F8F7;             /* neutrals-50 */
+  --surface:#FFFFFF;
+  --border:#D9D9D6;         /* neutrals-300 */
+  --text:#1C1C1A;           /* neutrals-800 */
+  --muted:#6B6B63;          /* neutrals-500 */
+  --subtle:#F0F0EE;         /* neutrals-100 */
+  --shadow:0 1px 4px rgba(0,0,0,.07);
+  --brand:#2E7D32;          /* green-700 = text-brand-dark */
+  --brand-bg:#F1F8E9;       /* green-50 */
+  --success:#2E7D32;        /* green-700 */
+  --success-bg:#F1F8E9;     /* green-50 */
+  --warning:#B45309;        /* orange-700 */
+  --warning-bg:#FFF7ED;     /* orange-50 */
+  --critical:#B91C1C;       /* red-700 */
+  --critical-bg:#FEF2F2;    /* red-50 */
+  --nav-bg:#1E3A5F;         /* newCold-500 — sidebar-main-bg */
+  --nav-text:#DBEAFE;       /* newCold-100 */
+  --nav-muted:#93C5FD;      /* newCold-200 */
+  --nav-border:#1E40AF;     /* newCold-600 */
+  --nav-logo:#FFFFFF;
 }
+
+/* Dark mode — CCA design tokens */
 [data-theme="dark"]{
-  --bg:#111110;--surface:#1c1c1a;--border:#2e2e2b;--text:#eeeeec;
-  --muted:#77776e;--subtle:#242422;--shadow:none;
+  --bg:#111827;             /* neutrals-900 */
+  --surface:#1F2937;        /* neutrals-800 */
+  --border:#374151;         /* neutrals-700 */
+  --text:#F3F4F6;           /* neutrals-100 */
+  --muted:#9CA3AF;          /* neutrals-400 */
+  --subtle:#1F2937;         /* neutrals-800 */
+  --shadow:none;
+  --brand:#86EFAC;          /* green-300 = text-brand-default dark */
+  --brand-bg:#14532D;       /* green-900 */
+  --success:#86EFAC;        /* green-300 */
+  --success-bg:#14532D;     /* green-900 */
+  --warning:#FCD34D;        /* orange-300 */
+  --warning-bg:#451A03;     /* orange-950 */
+  --critical:#FCA5A5;       /* red-300 */
+  --critical-bg:#450A0A;    /* red-950 */
+  --nav-bg:#1E3A5F;         /* newCold-500 — same as light */
+  --nav-text:#DBEAFE;
+  --nav-muted:#93C5FD;
+  --nav-border:#1E40AF;
+  --nav-logo:#FFFFFF;
 }
+
 body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);
   min-height:100vh;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
 a{color:inherit;text-decoration:none}
 
-/* Nav */
-.nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);
+/* Nav — CCA sidebar-main colors */
+.nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);
   padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:52px}
 .nav-left{display:flex;align-items:center;gap:10px}
-.nav-logo{font-size:15px;font-weight:600}
-.nav-sep{color:var(--border);font-size:16px;user-select:none}
-.nav-label{font-size:13px;color:var(--muted)}
+.nav-logo{font-size:15px;font-weight:600;color:var(--nav-logo)}
+.nav-sep{color:var(--nav-border);font-size:16px;user-select:none}
+.nav-label{font-size:13px;color:var(--nav-muted)}
 .nav-right{display:flex;align-items:center;gap:8px}
-.badge{font-size:11px;padding:3px 10px;border-radius:20px;background:var(--subtle);
-  color:var(--muted);font-weight:500;white-space:nowrap}
-.toggle{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);
-  background:var(--surface);cursor:pointer;display:flex;align-items:center;
-  justify-content:center;font-size:15px;transition:background .15s}
-.toggle:hover{background:var(--subtle)}
-.back{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:5px;
-  padding:4px 8px;border-radius:6px;transition:background .15s}
-.back:hover{background:var(--subtle);color:var(--text)}
+.badge{font-size:11px;padding:3px 10px;border-radius:20px;
+  background:rgba(255,255,255,.12);color:var(--nav-text);font-weight:500;white-space:nowrap}
+.toggle{height:28px;padding:0 10px;border-radius:6px;border:1px solid var(--nav-border);
+  background:rgba(255,255,255,.08);cursor:pointer;font-size:11px;font-weight:600;
+  color:var(--nav-text);letter-spacing:.03em;transition:background .15s}
+.toggle:hover{background:rgba(255,255,255,.16)}
+.back{font-size:13px;color:var(--nav-muted);display:flex;align-items:center;gap:5px;
+  padding:4px 8px;border-radius:6px;transition:background .15s;text-decoration:none}
+.back:hover{background:rgba(255,255,255,.1);color:var(--nav-text)}
 
 /* Layout */
 .wrap{max-width:1080px;margin:0 auto;padding:2.5rem 2rem}
@@ -70,11 +111,9 @@ a{color:inherit;text-decoration:none}
 .kpi-note{font-size:11px;color:var(--muted);margin-top:8px}
 .trend{display:inline-flex;align-items:center;gap:4px;font-size:12px;
   font-weight:500;padding:3px 9px;border-radius:20px}
-.t-good{background:#e1f5ee;color:#085041}
-.t-bad {background:#fcebeb;color:#791f1f}
+.t-good{background:var(--success-bg);color:var(--success)}
+.t-bad {background:var(--critical-bg);color:var(--critical)}
 .t-neu {background:var(--subtle);color:var(--muted)}
-[data-theme="dark"] .t-good{background:#0d2b20;color:#4ade9a}
-[data-theme="dark"] .t-bad {background:#2b1010;color:#f87171}
 
 /* Team hero (team pages) */
 .team-hero{border-radius:14px;padding:1.75rem 2rem;margin-bottom:1.75rem;
@@ -96,7 +135,7 @@ a{color:inherit;text-decoration:none}
 .epic-divider{margin:12px 0;border:none;border-top:1px solid var(--border)}
 .epic-foot{display:flex;justify-content:space-between;align-items:center}
 .epic-upd{font-size:10px;color:var(--muted)}
-.epic-link{font-size:12px;font-weight:500;color:#7F77DD}
+.epic-link{font-size:12px;font-weight:500;color:var(--brand)}
 .epic-link:hover{text-decoration:underline}
 
 /* Footer */
@@ -122,17 +161,17 @@ function toggleTheme(){
   document.documentElement.setAttribute('data-theme',nxt);
   localStorage.setItem('cctheme',nxt);
   var el=document.getElementById('ticon');
-  if(el) el.textContent=nxt==='dark'?'☀':'☽';
+  if(el) el.textContent=nxt==='dark'?'Light':'Dark';
 }
 </script>
 </head>
 <body>
 <nav class="nav">
-  <div class="nav-left"><a class="back" href="../">← Teams</a><span class="nav-sep">·</span><span class="nav-logo">CtrlChain</span><span class="nav-sep">·</span><span class="nav-label">Internal Metrics</span></div>
+  <div class="nav-left"><a class="back" href="../">&#8592; Home</a><span class="nav-sep">·</span><span class="nav-logo">CtrlChain</span><span class="nav-sep">·</span><span class="nav-label">Internal Metrics</span></div>
   <div class="nav-right">
     <span class="badge">Apr 2026</span>
-    <span class="badge">↻ 2026-04-15</span>
-    <button class="toggle" onclick="toggleTheme()" title="Toggle theme"><span id="ticon">☀</span></button>
+    <span class="badge">&#8635; 2026-04-15</span>
+    <button class="toggle" onclick="toggleTheme()"><span id="ticon">Light</span></button>
   </div>
 </nav>
 <div class="wrap">
